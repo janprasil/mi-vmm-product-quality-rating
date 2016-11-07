@@ -1,1 +1,1 @@
-# mi-vwm-product-quality-rating
+# mi-vmm-product-quality-rating
