@@ -46,10 +46,6 @@ namespace vmm.api.Controllers
                 var result = contoursManager.Detect(filename, target);
                 result.ImageUrl = urlTarget;
                 list.Add(result);
-                //foreach (KeyValuePair<int, double> x in result)
-                //{
-                //    content += $"{x.Key.ToString()}\t{x.Value.ToString()}\n";
-                //}
             }
 
             var maxSize = 0;

@@ -16,11 +16,6 @@ namespace vmm.api.Services
 
         public Shape Detect(string filename, string targetFilename)
         {
-            // There is a big mess because I wanted to try best tresholds...
-            //for( double i = 5.0; i<200.0; i+=5.0 )
-            //{
-            //    for (double j = 5.0; j<200.0; j+=5.0)
-            //    {
             var cannyThreshold = 30.0;
             var cannyThresholdLinking = 150.0;
             return GetShape(cannyThreshold, cannyThresholdLinking, filename, targetFilename);
@@ -36,7 +31,7 @@ namespace vmm.api.Services
             contourImage.SetTo(new MCvScalar(0));
             var contour = FindContour(cannyEdges, contourImage);
 
-            contourImage.Save(targetFilename/* + "-" + cannyThreshold.ToString() + "--" + cannyThresholdLinking.ToString() + ".jpeg"*/);
+            contourImage.Save(targetFilename);
             var center = GetCenter(contour);
 
             return new Shape()
@@ -80,12 +75,11 @@ namespace vmm.api.Services
         {
             var image = new Image<Bgr, byte>(filename).Resize(1500, 1500, Inter.Linear, true);
 
-            //Convert the image to grayscale and filter out the noise
+            // Convert the image to grayscale and filter out the noise
             var result = new UMat();
-            //result = image.ToUMat();
             CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Gray);
 
-            //use image pyr to remove noise
+            // Use image pyr to remove noise
             var pyrDown = new UMat();
             CvInvoke.PyrDown(result, pyrDown);
             CvInvoke.PyrUp(pyrDown, result);
