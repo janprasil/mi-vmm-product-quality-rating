@@ -133,5 +133,34 @@ namespace vmm.api.Services
             }
             return result;
         }
+
+        public double DynamicTimeWarping(Shape s1, Shape s2)
+        {
+            int n = s1.Timeline.Count;
+            int m = s2.Timeline.Count;
+            var result = new double[n + 1, m + 1];
+            for (int i = 1; i <= n; i++) result[i, 0] = 10000.0;
+            for (int i = 1; i <= m; i++) result[0, i] = 10000.0;
+            result[0, 0] = 0;
+            for (int i = 1; i <= n; i++)
+            {
+                for (int j = 1; j <= m; j++)
+                {
+                    var cost = Math.Pow(s1.Timeline[i - 1] - s2.Timeline[j - 1], 2.0);
+                    //var x = s1.Timeline[i - 1] - s2.Timeline[j - 1];
+                    //var y = i - j - 2;
+                    //var cost = Math.Sqrt(x * x - y * y);
+                    result[i, j] = cost + min(result[i - 1, j], result[i, j - 1], result[i - 1, j - 1]);
+                }
+            }
+            return result[n, m];
+        }
+
+        private double min(double v1, double v2, double v3)
+        {
+            double v = Math.Min(v1, v2);
+            return Math.Min(v, v3);
+        }
+        
     }
 }

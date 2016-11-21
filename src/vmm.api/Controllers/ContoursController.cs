@@ -44,8 +44,14 @@ namespace vmm.api.Controllers
                     fs.Flush();
                 }
                 var result = contoursManager.Detect(filename, target);
+
                 result.ImageUrl = urlTarget;
                 list.Add(result);
+            }
+
+            if (list.Count >= 2)
+            {
+                var dtw = contoursManager.DynamicTimeWarping(list[0], list[1]);
             }
 
             var maxSize = 0;
