@@ -4,6 +4,8 @@
 src/**/*.jpeg
 src/**/*.jpg
 
+.DS_Store
+
 # User-specific files
 *.suo
 *.user
