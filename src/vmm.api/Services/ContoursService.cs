@@ -11,34 +11,28 @@ namespace vmm.api.Services
 {
     public class ContoursService : IContoursManager
     {
-        private UMat _image;
-        public static MCvScalar CONTOUR_COLOR = new MCvScalar(0, 0, 255);
-        public static int CONTOUR_THICKNESS = 3;
+        public static readonly MCvScalar CONTOUR_COLOR = new MCvScalar(0, 0, 255);
+        public const int CONTOUR_THICKNESS = 3;
 
-        public Shape Detect(String filename, String targetFilename)
+        public Shape Detect(string filename, string targetFilename)
         {
-            Shape s = null;
             // There is a big mess because I wanted to try best tresholds...
             //for( double i = 5.0; i<200.0; i+=5.0 )
             //{
             //    for (double j = 5.0; j<200.0; j+=5.0)
             //    {
-            double cannyThreshold = 30.0;
-            double cannyThresholdLinking = 150.0;
-            s = GetShape(cannyThreshold, cannyThresholdLinking, filename, targetFilename);
-            //   }
-            //}
-            return s;
+            var cannyThreshold = 30.0;
+            var cannyThresholdLinking = 150.0;
+            return GetShape(cannyThreshold, cannyThresholdLinking, filename, targetFilename);
         }
 
         private Shape GetShape(double cannyThreshold, double cannyThresholdLinking, string filename, string targetFilename)
         {
-            CreateImage(filename);
-            UMat cannyEdges = new UMat();
-            if (_image == null) return null;
-            CvInvoke.Canny(_image, cannyEdges, cannyThreshold, cannyThresholdLinking);
+            var image = CreateImage(filename);
+            var cannyEdges = new UMat();
+            CvInvoke.Canny(image, cannyEdges, cannyThreshold, cannyThresholdLinking);
 
-            Mat contourImage = new Mat(_image.Size, DepthType.Cv8U, 3);
+            var contourImage = new Mat(image.Size, DepthType.Cv8U, 3);
             contourImage.SetTo(new MCvScalar(0));
             var contour = FindContour(cannyEdges, contourImage);
 
@@ -74,7 +68,7 @@ namespace vmm.api.Services
         private Dictionary<int, double> Normalize(Dictionary<int, double> input, int max)
         {
             var result = new Dictionary<int, double>();
-            var ratio = (double)max / input.Max(x => x.Value);
+            var ratio = max / input.Max(x => x.Value);
             foreach (var x in input)
             {
                 result[x.Key] = x.Value * ratio;
@@ -82,37 +76,37 @@ namespace vmm.api.Services
             return result;
         }
 
-        private void CreateImage(string filename)
+        private UMat CreateImage(string filename)
         {
-            Image<Bgr, byte> image = new Image<Bgr, byte>(filename).Resize(1500, 1500, Emgu.CV.CvEnum.Inter.Linear, true);
+            var image = new Image<Bgr, byte>(filename).Resize(1500, 1500, Inter.Linear, true);
 
             //Convert the image to grayscale and filter out the noise
-            UMat result = new UMat();
+            var result = new UMat();
             //result = image.ToUMat();
             CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Gray);
 
             //use image pyr to remove noise
-            UMat pyrDown = new UMat();
+            var pyrDown = new UMat();
             CvInvoke.PyrDown(result, pyrDown);
             CvInvoke.PyrUp(pyrDown, result);
-            result.Save(filename + ".hovno.jpeg");
-            _image = result;
+            result.Save(filename + ".pic.jpeg");
+            return result;
         }
 
         private VectorOfPoint FindContour(IInputOutputArray cannyEdges, IInputOutputArray result)
         {
-            int largestIndex = 0;
-            double largestArea = 0;
+            var largestIndex = 0;
+            var largestArea = 0.0;
             VectorOfPoint largestContour = null;
 
-            using (Mat hierachy = new Mat())
-            using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
+            using (var hierachy = new Mat())
+            using (var contours = new VectorOfVectorOfPoint())
             {
                 CvInvoke.FindContours(cannyEdges, contours, hierachy, RetrType.List, ChainApproxMethod.ChainApproxNone);
 
                 for (int i = 0; i < contours.Size; i++)
                 {
-                    double currentArea = CvInvoke.ContourArea(contours[i], false);
+                    var currentArea = CvInvoke.ContourArea(contours[i], false);
                     if (currentArea > largestArea)
                     {
                         largestArea = currentArea;
@@ -138,9 +132,9 @@ namespace vmm.api.Services
             var index = 0;
             foreach (var c in contour.ToArray())
             {
-                double x = center.X - c.X;
-                double y = center.Y - c.Y;
-                double distance = Math.Sqrt(x * x + y * y);
+                var x = center.X - c.X;
+                var y = center.Y - c.Y;
+                var distance = Math.Sqrt(x * x + y * y);
                 result.Add(index++, distance);
             }
             return result;
