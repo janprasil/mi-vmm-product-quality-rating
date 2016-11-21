@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using vmm.api.Services;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using System.IO;
-using Microsoft.DotNet.InternalAbstractions;
-using Microsoft.Extensions.PlatformAbstractions;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using vmm.api.Models;
+using vmm.api.Services;
 
 namespace vmm.api.Controllers
 {
     [Route("api")]
     public class ContoursController : Controller
     {
-
         private IContoursManager _contoursManager;
         private readonly IHostingEnvironment _appEnvironment;
 
@@ -27,19 +19,16 @@ namespace vmm.api.Controllers
             _appEnvironment = appEnvironment;
         }
 
-        // GET api/values
         [HttpGet]
         public ActionResult Get()
         {
-            return Content("Create a POST Request with parametrs ´files´");
+            return Content("Create a POST Request with parameters ´files´");
         }
 
-        // POST api/values
         [HttpPost]
         public ActionResult Post(IList<IFormFile> files)
         {
-            //IEnumerable<Shape>
-            String content = "";
+            var content = "";
             var list = new List<Shape>();
             foreach (var file in files)
             {
@@ -49,7 +38,7 @@ namespace vmm.api.Controllers
                 var target = $@"{path}\wwwroot\upload\{contoursFilename}";
                 var urlTarget = $"{HttpContext.Request.Host}/upload/{contoursFilename}";
 
-                using (FileStream fs = System.IO.File.Create(filename))
+                using (var fs = System.IO.File.Create(filename))
                 {
                     file.CopyTo(fs);
                     fs.Flush();
@@ -69,7 +58,7 @@ namespace vmm.api.Controllers
                 if (x.Timeline.Count > maxSize) maxSize = x.Timeline.Count;
             }
 
-            for (int i = 0; i < maxSize; i++ )
+            for (var i = 0; i < maxSize; i++)
             {
                 foreach (var x in list)
                 {
@@ -83,6 +72,5 @@ namespace vmm.api.Controllers
 
             return Content(content);
         }
-
     }
 }

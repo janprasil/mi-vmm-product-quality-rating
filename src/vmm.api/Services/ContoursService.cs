@@ -1,26 +1,19 @@
-﻿using System;
+﻿using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
+using Emgu.CV.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Emgu.CV;
-using Emgu.CV.Structure;
-using Emgu.CV.CvEnum;
-using Emgu.CV.Util;
-using System.Drawing;
 using vmm.api.Models;
-
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace vmm.api.Services
 {
     public class ContoursService : IContoursManager
     {
-     
         private UMat _image;
         public static MCvScalar CONTOUR_COLOR = new MCvScalar(0, 0, 255);
         public static int CONTOUR_THICKNESS = 3;
-
 
         public Shape Detect(String filename, String targetFilename)
         {
@@ -30,13 +23,12 @@ namespace vmm.api.Services
             //{
             //    for (double j = 5.0; j<200.0; j+=5.0)
             //    {
-                    double cannyThreshold = 30.0;
-                    double cannyThresholdLinking = 150.0;
-                    s = GetShape(cannyThreshold, cannyThresholdLinking, filename, targetFilename);
+            double cannyThreshold = 30.0;
+            double cannyThresholdLinking = 150.0;
+            s = GetShape(cannyThreshold, cannyThresholdLinking, filename, targetFilename);
             //   }
             //}
             return s;
-            
         }
 
         private Shape GetShape(double cannyThreshold, double cannyThresholdLinking, string filename, string targetFilename)
@@ -89,9 +81,10 @@ namespace vmm.api.Services
             }
             return result;
         }
-        private void CreateImage(String filename)
+
+        private void CreateImage(string filename)
         {
-            Image<Bgr, Byte> image = new Image<Bgr, byte>(filename).Resize(1500, 1500, Emgu.CV.CvEnum.Inter.Linear, true);
+            Image<Bgr, byte> image = new Image<Bgr, byte>(filename).Resize(1500, 1500, Emgu.CV.CvEnum.Inter.Linear, true);
 
             //Convert the image to grayscale and filter out the noise
             UMat result = new UMat();
@@ -105,12 +98,12 @@ namespace vmm.api.Services
             result.Save(filename + ".hovno.jpeg");
             _image = result;
         }
+
         private VectorOfPoint FindContour(IInputOutputArray cannyEdges, IInputOutputArray result)
         {
-
-            int             largestIndex    = 0;
-            double          largestArea     = 0;
-            VectorOfPoint   largestContour         = null;
+            int largestIndex = 0;
+            double largestArea = 0;
+            VectorOfPoint largestContour = null;
 
             using (Mat hierachy = new Mat())
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
@@ -126,18 +119,20 @@ namespace vmm.api.Services
                         largestIndex = i;
                     }
                 }
-                
+
                 CvInvoke.DrawContours(result, contours, largestIndex, new MCvScalar(0, 0, 255), 3, LineType.AntiAlias, hierachy);
                 largestContour = new VectorOfPoint(contours[largestIndex].ToArray());
             }
             return largestContour;
         }
-        private MCvPoint2D64f GetCenter( VectorOfPoint contour )
+
+        private MCvPoint2D64f GetCenter(VectorOfPoint contour)
         {
             var moment = CvInvoke.Moments(contour, true);
             return moment.GravityCenter;
         }
-        private Dictionary<int, double> ComputeDistancesFromCenterPoint( VectorOfPoint contour, MCvPoint2D64f center )
+
+        private Dictionary<int, double> ComputeDistancesFromCenterPoint(VectorOfPoint contour, MCvPoint2D64f center)
         {
             var result = new Dictionary<int, double>();
             var index = 0;
