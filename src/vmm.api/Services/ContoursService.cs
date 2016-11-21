@@ -24,9 +24,23 @@ namespace vmm.api.Services
 
         public Shape Detect(String filename, String targetFilename)
         {
-            double cannyThreshold = 180.0;
-            double cannyThresholdLinking = 120.0;
+            Shape s = null;
+            // There is a big mess because I wanted to try best tresholds...
+            //for( double i = 5.0; i<200.0; i+=5.0 )
+            //{
+            //    for (double j = 5.0; j<200.0; j+=5.0)
+            //    {
+                    double cannyThreshold = 30.0;
+                    double cannyThresholdLinking = 150.0;
+                    s = GetShape(cannyThreshold, cannyThresholdLinking, filename, targetFilename);
+            //   }
+            //}
+            return s;
+            
+        }
 
+        private Shape GetShape(double cannyThreshold, double cannyThresholdLinking, string filename, string targetFilename)
+        {
             CreateImage(filename);
             UMat cannyEdges = new UMat();
             if (_image == null) return null;
@@ -36,7 +50,7 @@ namespace vmm.api.Services
             contourImage.SetTo(new MCvScalar(0));
             var contour = FindContour(cannyEdges, contourImage);
 
-            contourImage.Save(targetFilename);
+            contourImage.Save(targetFilename/* + "-" + cannyThreshold.ToString() + "--" + cannyThresholdLinking.ToString() + ".jpeg"*/);
             var center = GetCenter(contour);
 
             return new Shape()
@@ -77,16 +91,18 @@ namespace vmm.api.Services
         }
         private void CreateImage(String filename)
         {
-            Image<Bgr, Byte> image = new Image<Bgr, byte>(filename).Resize(1000, 1000, Emgu.CV.CvEnum.Inter.Linear, true);
+            Image<Bgr, Byte> image = new Image<Bgr, byte>(filename).Resize(1500, 1500, Emgu.CV.CvEnum.Inter.Linear, true);
 
             //Convert the image to grayscale and filter out the noise
             UMat result = new UMat();
+            //result = image.ToUMat();
             CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Gray);
 
             //use image pyr to remove noise
             UMat pyrDown = new UMat();
             CvInvoke.PyrDown(result, pyrDown);
             CvInvoke.PyrUp(pyrDown, result);
+            result.Save(filename + ".hovno.jpeg");
             _image = result;
         }
         private VectorOfPoint FindContour(IInputOutputArray cannyEdges, IInputOutputArray result)
@@ -110,7 +126,8 @@ namespace vmm.api.Services
                         largestIndex = i;
                     }
                 }
-                CvInvoke.DrawContours(result, contours, largestIndex, new MCvScalar(0, 0, 255), 3, LineType.EightConnected, hierachy);
+                
+                CvInvoke.DrawContours(result, contours, largestIndex, new MCvScalar(0, 0, 255), 3, LineType.AntiAlias, hierachy);
                 largestContour = new VectorOfPoint(contours[largestIndex].ToArray());
             }
             return largestContour;

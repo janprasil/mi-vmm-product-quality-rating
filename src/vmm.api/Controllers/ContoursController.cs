@@ -14,14 +14,14 @@ using vmm.api.Models;
 
 namespace vmm.api.Controllers
 {
-    [Route("api/[controller]")]
-    public class ValuesController : Controller
+    [Route("api")]
+    public class ContoursController : Controller
     {
 
         private IContoursManager _contoursManager;
         private readonly IHostingEnvironment _appEnvironment;
 
-        public ValuesController(IContoursManager contoursManager, IHostingEnvironment appEnvironment)
+        public ContoursController(IContoursManager contoursManager, IHostingEnvironment appEnvironment)
         {
             _contoursManager = contoursManager;
             _appEnvironment = appEnvironment;
@@ -29,16 +29,9 @@ namespace vmm.api.Controllers
 
         // GET api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public ActionResult Get()
         {
-           return new string[] { "value1", "value2" };
-        }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
+            return Content("Create a POST Request with parametrs ´files´");
         }
 
         // POST api/values
@@ -81,7 +74,7 @@ namespace vmm.api.Controllers
                 foreach (var x in list)
                 {
                     if (x.Timeline.Count - 1 >= i)
-                        content += $"{x.Timeline[i].ToString()};";
+                        content += $"{x.Timeline[i].ToString()}\t";
                     else
                         content += ";";
                 }
@@ -91,16 +84,5 @@ namespace vmm.api.Controllers
             return Content(content);
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
