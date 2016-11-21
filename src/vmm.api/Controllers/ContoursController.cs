@@ -27,7 +27,7 @@ namespace vmm.api.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post(IList<IFormFile> files)
+        public ActionResult Post()
         {
             var list = new List<Shape>();
             foreach (var file in Request.Form.Files)
