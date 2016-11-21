@@ -23,12 +23,16 @@
   },
 
   "frameworks": {
-    "net452": { }
+    "net452": {}
   },
 
   "buildOptions": {
     "emitEntryPoint": true,
     "preserveCompilationContext": true
+  },
+
+  "runtimes": {
+    "win7-x86": {}
   },
 
   "publishOptions": {

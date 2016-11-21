@@ -8,7 +8,7 @@ using vmm.api.Services;
 
 namespace vmm.api.Controllers
 {
-    [Route("api")]
+    [Route("api/contours")]
     public class ContoursController : Controller
     {
         private IContoursManager contoursManager;
@@ -30,7 +30,7 @@ namespace vmm.api.Controllers
         public ActionResult Post(IList<IFormFile> files)
         {
             var list = new List<Shape>();
-            foreach (var file in files)
+            foreach (var file in Request.Form.Files)
             {
                 var path = appEnvironment.ContentRootPath;
                 var filename = $@"{path}\uploads\{file.FileName}";
