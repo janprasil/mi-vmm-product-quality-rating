@@ -4,8 +4,7 @@ import { Record } from 'immutable';
 const State = Record({
   error: null,
   location: null,
-  uploadPending: false,
-  contoursPending: false
+  uploadPending: false
 }, 'app');
 
 const appReducer = (state = new State(), action) => {
@@ -21,12 +20,6 @@ const appReducer = (state = new State(), action) => {
 
     case 'FILE_UPLOAD_MULTIPLE_FILE_UPLOAD_SUCCESS':
       return state.set('uploadPending', false);
-
-    case 'FETCH_CONTOURS_START':
-      return state.set('contoursPending', true);
-
-    case 'FETCH_CONTOURS_SUCCESS':
-      return state.set('contoursPending', false);
 
     default:
       return state;

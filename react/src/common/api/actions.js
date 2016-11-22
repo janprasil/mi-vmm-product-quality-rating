@@ -2,6 +2,7 @@
 import 'isomorphic-fetch';
 
 export const FETCH_CONTOURS_SUCCESS = 'FETCH_CONTOURS_SUCCESS';
+export const FETCH_CONTOURS_ERROR = 'FETCH_CONTOURS_ERROR';
 
 export function fetchContours() {
   return {
