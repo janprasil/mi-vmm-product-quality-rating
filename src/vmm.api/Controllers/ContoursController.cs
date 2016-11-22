@@ -27,6 +27,18 @@ namespace vmm.api.Controllers
             return Json(list);
         }
 
+        [HttpGet]
+        [Route("dtw")]
+        public JsonResult GetDTW()
+        {
+            if (list.Count >= 2)
+            {
+                return Json(contoursManager.DynamicTimeWarping(list[0], list[1]));
+            }
+            return null;
+
+        }
+
         [HttpPost]
         public JsonResult Post()
         {

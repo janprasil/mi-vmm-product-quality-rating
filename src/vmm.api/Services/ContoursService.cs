@@ -4,6 +4,7 @@ using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using vmm.api.Models;
 
@@ -134,7 +135,7 @@ namespace vmm.api.Services
             return result;
         }
 
-        public double DynamicTimeWarping(Shape s1, Shape s2)
+        public IEnumerable<Point> DynamicTimeWarping(Shape s1, Shape s2)
         {
             int n = s1.Timeline.Count;
             int m = s2.Timeline.Count;
@@ -147,13 +148,21 @@ namespace vmm.api.Services
                 for (int j = 1; j <= m; j++)
                 {
                     var cost = Math.Pow(s1.Timeline[i - 1] - s2.Timeline[j - 1], 2.0);
-                    //var x = s1.Timeline[i - 1] - s2.Timeline[j - 1];
-                    //var y = i - j - 2;
-                    //var cost = Math.Sqrt(x * x - y * y);
                     result[i, j] = cost + min(result[i - 1, j], result[i, j - 1], result[i - 1, j - 1]);
                 }
             }
-            return result[n, m];
+            var res = Backtrack(result, n, m);
+
+            //y-x(m/n) = 0
+            var distances = new List<double>();
+            var pX = (double)m / (double)n;
+            foreach (var x in res)
+            {
+                distances.Add((Math.Abs(-1 * pX * x.X + x.Y) / Math.Sqrt(pX * pX + 1)));
+            }
+            var similarity = distances.Sum() / res.Count();
+            //var similarity = res.Select(x => Math.Abs(x.X - x.Y)).Sum(x => x) / res.Count();
+            return res;
         }
 
         private double min(double v1, double v2, double v3)
@@ -161,6 +170,33 @@ namespace vmm.api.Services
             double v = Math.Min(v1, v2);
             return Math.Min(v, v3);
         }
+
+        private IEnumerable<Point> Backtrack(double[,] costs, int n, int m)
+        {
+            var path = new List<Point>();
+            var i = n - 1;
+            var j = m - 1;
+            while (i > 0 && j >0)
+            {
+                var comp = min(costs[i - 1, j - 1], costs[i - 1, j], costs[i, j - 1]);
+                if (i == 0) j = j - 1;
+                else if (j == 0) i = i - 1;
+                else
+                {
+                    if (costs[i - 1, j] == comp) i = i - 1;
+                    else if (costs[i, j - 1] == comp) j = j - 1;
+                    else
+                    {
+                        i = i - 1;
+                        j = j - 1;
+                    }
+                }
+                path.Add(new Point(j, i));
+            }
+            path.Add(new Point(0, 0));
+            return path;
+        }
         
     }
+    
 }
