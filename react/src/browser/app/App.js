@@ -2,22 +2,14 @@ import * as themes from './themes';
 import favicon from '../../common/app/favicon';
 import Helmet from 'react-helmet';
 import NotFound from '../notfound/NotFoundPage';
-import React, { PropTypes as RPT, PureComponent as Component } from 'react';
+import React, { PureComponent as Component } from 'react';
 import Home from '../home/Page';
-import { connect } from 'react-redux';
 import { Container } from '../app/components';
 import { Match, ThemeProvider } from '../../common/app/components';
 import { Miss } from 'react-router';
 
-@connect(state => ({
-}),
-{ })
 export default class App extends Component {
   static propTypes = {
-  }
-
-  componentDidMount() {
-
   }
 
   render() {

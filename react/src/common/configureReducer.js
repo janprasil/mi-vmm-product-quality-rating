@@ -2,9 +2,8 @@ import api from './api/reducer';
 import app from './app/reducer';
 import config from './config/reducer';
 import device from './device/reducer';
-import themes from './themes/reducer';
 import { combineReducers } from 'redux';
-import { fieldsReducer as fields } from './lib/redux-fields';
+import { reducer as fileUpload } from 'redux-file-upload';
 
 const configureReducer = () =>
   combineReducers({
@@ -12,8 +11,7 @@ const configureReducer = () =>
     app,
     config,
     device,
-    fields,
-    themes,
+    fileUpload
   });
 
 export default configureReducer;

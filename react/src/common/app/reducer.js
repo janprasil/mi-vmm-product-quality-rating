@@ -1,13 +1,11 @@
 import * as actions from './actions';
-import { Map, Record } from 'immutable';
+import { Record } from 'immutable';
 
 const State = Record({
   error: null,
   location: null,
-  menuShown: false,
-  isLoggedIn: false,
-  chosenSeats: new Map(),
-  maxSeats: 2
+  uploadPending: false,
+  contoursPending: false
 }, 'app');
 
 const appReducer = (state = new State(), action) => {
@@ -18,23 +16,17 @@ const appReducer = (state = new State(), action) => {
   }
 
   switch (action.type) {
-    case actions.TOGGLE_MENU:
-      return state.set('menuShown', !state.get('menuShown'));
+    case 'FILE_UPLOAD_MULTIPLE_FILE_UPLOAD_START':
+      return state.set('uploadPending', true);
 
-    case actions.APP_SET_LOCATION:
-      return state.set('location', action.payload.location).set('menuShown', false);
+    case 'FILE_UPLOAD_MULTIPLE_FILE_UPLOAD_SUCCESS':
+      return state.set('uploadPending', false);
 
-    case actions.LOGIN:
-      return state.set('isLoggedIn', true);
+    case 'FETCH_CONTOURS_START':
+      return state.set('contoursPending', true);
 
-    case actions.LOGOUT:
-      return state.set('isLoggedIn', false);
-
-    case actions.INCREMENT_SEATS:
-      return state.set('maxSeats', state.get('maxSeats') + 1);
-
-    case actions.DECREMENT_SEATS:
-      return state.set('maxSeats', state.get('maxSeats') < 2 ? 1 : state.get('maxSeats') - 1);
+    case 'FETCH_CONTOURS_SUCCESS':
+      return state.set('contoursPending', false);
 
     default:
       return state;

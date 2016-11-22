@@ -9,7 +9,7 @@ const injectMiddleware = deps => ({ dispatch, getState }) => next => action =>
     : action
   );
 
-const configureMiddleware = (initialState, platformDeps, platformMiddleware) => {
+const configureMiddleware = (initialState, platformDeps, platformMiddleware, sagaMiddleware) => {
   const middleware = [
     injectMiddleware({
       ...platformDeps,
@@ -18,6 +18,7 @@ const configureMiddleware = (initialState, platformDeps, platformMiddleware) => 
       validate,
     }),
     promiseMiddleware,
+    sagaMiddleware,
     ...platformMiddleware,
   ];
 

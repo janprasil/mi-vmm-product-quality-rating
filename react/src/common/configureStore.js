@@ -1,6 +1,8 @@
 import configureReducer from './configureReducer';
 import configureMiddleware from './configureMiddleware';
+import createSagaMiddleware from 'redux-saga';
 import { applyMiddleware, createStore } from 'redux';
+import saga from './sagas';
 
 type Options = {
   initialState: Object,
@@ -17,10 +19,13 @@ const configureStore = (options: Options) => {
 
   const reducer = configureReducer(initialState);
 
+
+  const sagaMiddleware = createSagaMiddleware();
   const middleware = configureMiddleware(
     initialState,
     platformDeps,
-    platformMiddleware
+    platformMiddleware,
+    sagaMiddleware
   );
 
   const store = createStore(
@@ -48,6 +53,8 @@ const configureStore = (options: Options) => {
       });
     }
   }
+
+  sagaMiddleware.run(saga);
 
   return store;
 };

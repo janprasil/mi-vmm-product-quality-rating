@@ -5679,6 +5679,10 @@ redux-logger@^2.1.1:
   dependencies:
     deep-diff "0.3.4"
 
+redux-saga:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/redux-saga/-/redux-saga-0.13.0.tgz#9294386550deb0d56bc9a1b3c90a613e7ddb6593"
+
 redux-storage-decorator-debounce@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/redux-storage-decorator-debounce/-/redux-storage-decorator-debounce-1.1.1.tgz#8a4ebaca775792e1b7d604f7389ad56d075d47b3"
