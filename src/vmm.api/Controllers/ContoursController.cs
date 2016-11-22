@@ -13,6 +13,7 @@ namespace vmm.api.Controllers
     {
         private IContoursManager contoursManager;
         private readonly IHostingEnvironment appEnvironment;
+        private static List<Shape> list = new List<Shape>();
 
         public ContoursController(IContoursManager contoursManager, IHostingEnvironment appEnvironment)
         {
@@ -21,15 +22,14 @@ namespace vmm.api.Controllers
         }
 
         [HttpGet]
-        public ActionResult Get()
+        public JsonResult Get()
         {
-            return Content("Create a POST Request with parameters 'files'");
+            return Json(list);
         }
 
         [HttpPost]
-        public ActionResult Post()
+        public JsonResult Post()
         {
-            var list = new List<Shape>();
             foreach (var file in Request.Form.Files)
             {
                 var path = appEnvironment.ContentRootPath;
@@ -48,6 +48,8 @@ namespace vmm.api.Controllers
                 result.ImageUrl = urlTarget;
                 list.Add(result);
             }
+
+            return Json(string.Empty);
 
             if (list.Count >= 2)
             {
@@ -74,7 +76,15 @@ namespace vmm.api.Controllers
                 sb.Append("\n");
             }
 
-            return Content(sb.ToString());
+            return Json(sb.ToString());
+        }
+
+
+        [HttpDelete]
+        public JsonResult Delete()
+        {
+            list.Clear();
+            return Json(string.Empty);
         }
     }
 }
