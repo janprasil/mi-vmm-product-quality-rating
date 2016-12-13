@@ -3,10 +3,11 @@ import modRewrite from 'connect-modrewrite';
 
 const app = express();
 
-const apiUrl = process.env.API_URL;
-console.log(apiUrl)
+const appUrl = process.env.APP_URL;
+
 app.use(modRewrite([
-  `^/webapi/(.*)$ ${apiUrl}/$1 [P]`
+  `^/webapi/(.*)$ ${appUrl}/api/$1 [P]`,
+  `^/assets/(.*)$ ${appUrl}/$1 [P]`
 ]));
 
 app.on('mount', () => {

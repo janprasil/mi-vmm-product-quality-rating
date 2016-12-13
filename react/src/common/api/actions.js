@@ -25,8 +25,8 @@ export function fetchDtw() {
 
 export function deleteAllReference() {
   return {
-    type: 'DELETE_ALL',
-    payload: fetch('/webapi/contours', { method: 'DELETE' }).then(res => res.json())
+    type: 'DELETE_ALL_REFERENCES',
+    payload: fetch('/webapi/reference/all', { method: 'DELETE' }).then(res => res.json())
   };
 }
 
