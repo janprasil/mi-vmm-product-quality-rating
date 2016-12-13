@@ -25,7 +25,7 @@ namespace vmm.api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IContoursManager, ContoursService>();
-
+            services.AddSingleton<IDbManager, FirebaseService>();
             services.AddMvc();
         }
 

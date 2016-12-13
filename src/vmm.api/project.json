@@ -16,7 +16,11 @@
     "Microsoft.Net.Http": "2.2.22",
     "OpenCV": "2.4.10",
     "System.Net.Http": "4.1.0",
-    "Microsoft.AspNetCore.StaticFiles": "1.1.0"
+    "Microsoft.AspNetCore.StaticFiles": "1.1.0",
+    "EntityFramework": "6.1.3",
+    "Microsoft.EntityFrameworkCore": "1.0.1",
+    "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0",
+    "FirebaseDatabase.net": "1.1.5"
   },
 
   "tools": {

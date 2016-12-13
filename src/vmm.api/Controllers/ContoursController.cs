@@ -1,24 +1,43 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Firebase.Database;
+using Firebase.Database.Query;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using vmm.api.Models;
 using vmm.api.Services;
+using System;
 
 namespace vmm.api.Controllers
 {
     [Route("api/contours")]
     public class ContoursController : Controller
     {
+        private IDbManager dbManager;
         private IContoursManager contoursManager;
         private readonly IHostingEnvironment appEnvironment;
         private static List<Shape> list = new List<Shape>();
 
-        public ContoursController(IContoursManager contoursManager, IHostingEnvironment appEnvironment)
+        public ContoursController(IContoursManager contoursManager, IHostingEnvironment appEnvironment, IDbManager dbManager)
         {
             this.contoursManager = contoursManager;
             this.appEnvironment = appEnvironment;
+            this.dbManager = dbManager;
+        }
+
+        [HttpGet]
+        [Route("firebase")]
+        public async Task<JsonResult> GetFirebase()
+        {
+            var result = await dbManager.postAsync(new Shape()
+            {
+                Center = new Emgu.CV.Structure.MCvPoint2D64f(1.2, 3.4),
+                ImageUrl = "http/test"
+            });
+            return Json(result);
+
         }
 
         [HttpGet]
@@ -36,7 +55,6 @@ namespace vmm.api.Controllers
                 return Json(contoursManager.DynamicTimeWarping(list[0], list[1]));
             }
             return null;
-
         }
 
         [HttpPost]
@@ -63,32 +81,6 @@ namespace vmm.api.Controllers
 
             return Json(string.Empty);
 
-            if (list.Count >= 2)
-            {
-                var dtw = contoursManager.DynamicTimeWarping(list[0], list[1]);
-            }
-
-            var maxSize = 0;
-            foreach (var x in list)
-            {
-                if (x.Timeline.Count > maxSize) maxSize = x.Timeline.Count;
-            }
-
-            var sb = new StringBuilder();
-
-            for (var i = 0; i < maxSize; i++)
-            {
-                foreach (var x in list)
-                {
-                    if (x.Timeline.Count - 1 >= i)
-                        sb.Append($"{x.Timeline[i].ToString()}\t");
-                    else
-                        sb.Append(";");
-                }
-                sb.Append("\n");
-            }
-
-            return Json(sb.ToString());
         }
 
 
@@ -98,5 +90,10 @@ namespace vmm.api.Controllers
             list.Clear();
             return Json(string.Empty);
         }
+    }
+
+    internal class FirebaseOptions
+    {
+        public Func<Task<string>> AuthTokenAsyncFactory { get; set; }
     }
 }
