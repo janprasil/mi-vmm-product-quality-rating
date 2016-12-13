@@ -54,7 +54,7 @@ namespace vmm.api.Controllers
             {
                 return Json(contoursManager.DynamicTimeWarping(list[0], list[1]));
             }
-            return null;
+            return Json(new { Id = "TWO_IMAGES_NEEDED", Message = "Upload at least two images" });
         }
 
         [HttpPost]

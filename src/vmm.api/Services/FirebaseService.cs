@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Firebase.Database;
 using vmm.api.Models;
 using Firebase.Database.Query;
+using System.Drawing;
+using Emgu.CV.Structure;
 
 namespace vmm.api.Services
 {
@@ -38,8 +40,12 @@ namespace vmm.api.Services
         {
             var type = getNodeName(typeof(T));
             if (type == null) throw new ChildNotExists();
-            var items = await firebase.Child(type).OrderByKey().OnceAsync<T>();
-            return items;
+            var items = firebase.Child(type);
+            var items2 =  items.OrderByKey();
+            var items3 = await items2.OnceAsync<T>();
+
+            //.OrderByValue().OnceAsync<T>();
+            return items3;
         }
 
         public async Task<FirebaseObject<T>> getAsync<T>(string name)
@@ -73,5 +79,15 @@ namespace vmm.api.Services
             }
             return null;
         } 
+    }
+
+    public class Shape2
+    {
+        public string ImageUrl { get; set; }
+        public string ContourImageUrl { get; set; }
+        public string LocalPath { get; set; }
+        public IEnumerable<Point> Points { get; set; }
+        public MCvPoint2D64f Center { get; set; }
+        public IEnumerable<double> Timeline { get; set; }
     }
 }

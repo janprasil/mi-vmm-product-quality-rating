@@ -17,8 +17,11 @@ namespace vmm.api.Services
 
         public Shape Detect(string filename, string targetFilename)
         {
-            var cannyThreshold = 30.0;
-            var cannyThresholdLinking = 150.0;
+            return Detect(filename, targetFilename, 30.0, 150.0);
+        }
+
+        public Shape Detect(string filename, string targetFilename, double cannyThreshold, double cannyThresholdLinking)
+        {
             return GetShape(cannyThreshold, cannyThresholdLinking, filename, targetFilename);
         }
 
@@ -37,14 +40,15 @@ namespace vmm.api.Services
 
             return new Shape()
             {
-                ImageUrl = targetFilename,
                 Timeline = ShiftToStart(Normalize(ComputeDistancesFromCenterPoint(contour, center), 10)),
                 Center = center,
-                Points = contour.ToArray()
+                Points = contour.ToArray(),
+                CannyTreshodLinking = cannyThresholdLinking,
+                CannyTreshold = cannyThreshold,
             };
         }
 
-        private Dictionary<int, double> ShiftToStart(Dictionary<int, double> input)
+        private IEnumerable<double> ShiftToStart(Dictionary<int, double> input)
         {
             var result = new Dictionary<int, double>();
             var maxItem = input.FirstOrDefault(x => x.Value == input.Values.Max()).Key;
@@ -58,7 +62,7 @@ namespace vmm.api.Services
                 result[k++] = input[i];
             }
 
-            return result;
+            return result.Values.ToList();
         }
 
         private Dictionary<int, double> Normalize(Dictionary<int, double> input, int max)
@@ -137,8 +141,8 @@ namespace vmm.api.Services
 
         public IEnumerable<Point> DynamicTimeWarping(Shape s1, Shape s2)
         {
-            int n = s1.Timeline.Count;
-            int m = s2.Timeline.Count;
+            int n = s1.Timeline.Count();
+            int m = s2.Timeline.Count();
             var result = new double[n + 1, m + 1];
             for (int i = 1; i <= n; i++) result[i, 0] = 10000.0;
             for (int i = 1; i <= m; i++) result[0, i] = 10000.0;
@@ -147,7 +151,7 @@ namespace vmm.api.Services
             {
                 for (int j = 1; j <= m; j++)
                 {
-                    var cost = Math.Pow(s1.Timeline[i - 1] - s2.Timeline[j - 1], 2.0);
+                    var cost = Math.Pow(s1.Timeline.ElementAt(i - 1) - s2.Timeline.ElementAt(j - 1), 2.0);
                     result[i, j] = cost + min(result[i - 1, j], result[i, j - 1], result[i - 1, j - 1]);
                 }
             }
