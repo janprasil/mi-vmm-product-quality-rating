@@ -1,9 +1,7 @@
-﻿using Firebase.Database;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using vmm.api.Models;
 using vmm.api.Services;
@@ -13,7 +11,6 @@ namespace vmm.api.Controllers
     [Route("api/reference")]
     public class ReferenceController : Controller
     {
-
         private IDbManager dbManager;
         private IContoursManager contoursManager;
         private readonly IHostingEnvironment appEnvironment;
@@ -26,7 +23,12 @@ namespace vmm.api.Controllers
             this.dbManager = dbManager;
         }
 
-
+        [HttpGet]
+        public async Task<JsonResult> Get()
+        {
+            var results = await dbManager.GetAllAsync<Shape>();
+            return Json(results);
+        }
 
         [HttpPut]
         public async Task<JsonResult> Put(string id, double ct, double ctl)
@@ -42,17 +44,9 @@ namespace vmm.api.Controllers
             return await Get();
         }
 
-        [HttpGet]
-        public async Task<JsonResult> Get()
-        {
-            var results = await dbManager.GetAllAsync<Shape>();
-            return Json(results);
-        }
-
         [HttpPost]
         public async Task<JsonResult> Post()
         {
-            var list = new List<FirebaseObject<Shape>>();
             foreach (var file in Request.Form.Files)
             {
                 var path = appEnvironment.ContentRootPath;
@@ -60,7 +54,6 @@ namespace vmm.api.Controllers
                 var target = $@"{path}\wwwroot\uploads\contures\{file.FileName}";
                 var contourUrlTarget = $"/uploads/contours/{file.FileName}";
                 var urlTarget = $"/uploads/originals/{file.FileName}";
-
                 using (var fs = System.IO.File.Create(filename))
                 {
                     file.CopyTo(fs);
@@ -72,10 +65,19 @@ namespace vmm.api.Controllers
                 result.ContourImageUrl = contourUrlTarget;
                 result.LocalPath = filename;
                 result.ContourLocalPath = target;
-                list.Add(await dbManager.PostAsync(result));
+                await dbManager.PostAsync(result);
             }
 
-            return Json(list.ToArray());
+            return await Get();
+        }
+
+        [HttpDelete]
+        [Route("all")]
+        public async Task<JsonResult> DeleteAll()
+        {
+            await dbManager.DeleteAllAsync<Shape>();
+            var results = await dbManager.GetAllAsync<Shape>();
+            return Json(results);
         }
     }
 }
