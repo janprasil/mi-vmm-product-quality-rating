@@ -85,7 +85,7 @@ const makeConfig = options => {
             env: {
               production: {
                 plugins: [
-                  'transform-react-constant-elements',
+                  'transform-react-constant-elements'
                 ],
               },
             },

@@ -7,6 +7,10 @@ const State = Record({
   references: new Map(),
 }, 'api');
 
+function transformReferences(data) {
+  return data.reduce((prev, x) => prev.set(x.key, Map(x.object)), Map());
+}
+
 const apiReducer = (state = new State(), action) => {
   switch (action.type) {
     case actions.FETCH_REFERENCES_START: {
@@ -17,7 +21,7 @@ const apiReducer = (state = new State(), action) => {
 
     case actions.FETCH_REFERENCES_SUCCESS: {
       return state
-        .setIn(['references', 'data'], action.payload)
+        .setIn(['references', 'data'], transformReferences(action.payload))
         .setIn(['references', 'error'], false)
         .setIn(['references', 'pending'], false);
     }

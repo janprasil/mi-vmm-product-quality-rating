@@ -33,12 +33,13 @@ export default class Page extends Component {
   }
 
   render() {
-    const { referencesError, referencesPending, deleteAllReference, startProcessing, uploadPending } = this.props;
+    const { references, referencesError, referencesPending, deleteAllReference, startProcessing, uploadPending } = this.props;
 
     return (
       <div>
         <div>
           <h1>Referenční obrázky</h1>
+          {references && references.map(x => <img src={`/assets/${x.get('contourImageUrl')}`} />)}
           <button onClick={() => deleteAllReference()}>Smazat vše</button>
           <FileUpload
             allowedFileTypes={['jpg', 'jpeg', 'png']}
