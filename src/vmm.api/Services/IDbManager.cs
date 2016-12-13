@@ -1,18 +1,21 @@
 ﻿using Firebase.Database;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace vmm.api.Services
 {
     public interface IDbManager
     {
-        Task<FirebaseObject<T>> postAsync<T>(T o);
-        Task putAsync<T>(String name, T o);
-        Task<FirebaseObject<T>> getAsync<T>(String name);
-        Task<IReadOnlyCollection<FirebaseObject<T>>> getAllAsync<T>();
-        Task deleteAsync<T>(String name);
-        Task deleteAllAsync<T>();
+        Task<FirebaseObject<T>> PostAsync<T>(T o);
+
+        Task PutAsync<T>(string s, T o);
+
+        Task<FirebaseObject<T>> GetAsync<T>(string name);
+
+        Task<IReadOnlyCollection<FirebaseObject<T>>> GetAllAsync<T>();
+
+        Task DeleteAsync<T>(string name);
+
+        Task DeleteAllAsync<T>();
     }
 }

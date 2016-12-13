@@ -103,7 +103,7 @@ namespace vmm.api.Services
             {
                 CvInvoke.FindContours(cannyEdges, contours, hierachy, RetrType.List, ChainApproxMethod.ChainApproxNone);
 
-                for (int i = 0; i < contours.Size; i++)
+                for (var i = 0; i < contours.Size; i++)
                 {
                     var currentArea = CvInvoke.ContourArea(contours[i], false);
                     if (currentArea > largestArea)
@@ -144,12 +144,12 @@ namespace vmm.api.Services
             int n = s1.Timeline.Count();
             int m = s2.Timeline.Count();
             var result = new double[n + 1, m + 1];
-            for (int i = 1; i <= n; i++) result[i, 0] = 10000.0;
-            for (int i = 1; i <= m; i++) result[0, i] = 10000.0;
+            for (var i = 1; i <= n; i++) result[i, 0] = 10000.0;
+            for (var i = 1; i <= m; i++) result[0, i] = 10000.0;
             result[0, 0] = 0;
-            for (int i = 1; i <= n; i++)
+            for (var i = 1; i <= n; i++)
             {
-                for (int j = 1; j <= m; j++)
+                for (var j = 1; j <= m; j++)
                 {
                     var cost = Math.Pow(s1.Timeline.ElementAt(i - 1) - s2.Timeline.ElementAt(j - 1), 2.0);
                     result[i, j] = cost + min(result[i - 1, j], result[i, j - 1], result[i - 1, j - 1]);
@@ -180,7 +180,7 @@ namespace vmm.api.Services
             var path = new List<Point>();
             var i = n - 1;
             var j = m - 1;
-            while (i > 0 && j >0)
+            while (i > 0 && j > 0)
             {
                 var comp = min(costs[i - 1, j - 1], costs[i - 1, j], costs[i, j - 1]);
                 if (i == 0) j = j - 1;
@@ -200,7 +200,5 @@ namespace vmm.api.Services
             path.Add(new Point(0, 0));
             return path;
         }
-        
     }
-    
 }

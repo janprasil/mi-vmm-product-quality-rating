@@ -31,13 +31,13 @@ namespace vmm.api.Controllers
         [HttpPut]
         public async Task<JsonResult> Put(string id, double ct, double ctl)
         {
-            var post = await dbManager.getAsync<Shape>(id);
+            var post = await dbManager.GetAsync<Shape>(id);
             var shape = post.Object;
             shape.CannyTreshold = ct;
             shape.CannyTreshodLinking = ctl;
             var result = contoursManager.Detect(shape.LocalPath, shape.ContourLocalPath);
 
-            await dbManager.putAsync(id, result);
+            await dbManager.PutAsync(id, result);
 
             return await Get();
         }
@@ -45,7 +45,7 @@ namespace vmm.api.Controllers
         [HttpGet]
         public async Task<JsonResult> Get()
         {
-            var results = await dbManager.getAllAsync<Shape>();
+            var results = await dbManager.GetAllAsync<Shape>();
             return Json(results);
         }
 
@@ -72,7 +72,7 @@ namespace vmm.api.Controllers
                 result.ContourImageUrl = contourUrlTarget;
                 result.LocalPath = filename;
                 result.ContourLocalPath = target;
-                list.Add(await dbManager.postAsync(result));
+                list.Add(await dbManager.PostAsync(result));
             }
 
             return Json(list.ToArray());
