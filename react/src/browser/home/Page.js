@@ -1,103 +1,64 @@
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchContours, deleteAll } from '../../common/api/actions';
+import { fetchReferences, deleteAllReference, startProcessing } from '../../common/api/actions';
 import { FileUpload } from 'redux-file-upload';
 import { LineChart } from 'react-d3-components';
 
 @connect(state => ({
-  contours: state.api.getIn(['contours', 'data']),
-  contoursError: state.api.getIn(['contours', 'error']),
-  contoursPending: state.api.getIn(['contours', 'pending']),
+  references: state.api.getIn(['references', 'data']),
+  referencesError: state.api.getIn(['references', 'error']),
+  referencesPending: state.api.getIn(['references', 'pending']),
   dtw: state.api.getIn(['dtw', 'data']),
   dtwError: state.api.getIn(['dtw', 'error']),
   dtwPending: state.api.getIn(['dtw', 'pending']),
   uploadPending: state.app.get('uploadPending'),
-}), { fetchContours, deleteAll })
+}), { fetchReferences, deleteAllReference, startProcessing })
 export default class Page extends Component {
 
   static propTypes = {
-    contours: RPT.array,
-    contoursError: RPT.bool,
-    contoursPending: RPT.bool,
-    deleteAll: RPT.func,
+    references: RPT.array,
+    referencesError: RPT.bool,
+    referencesPending: RPT.bool,
+    deleteAllReference: RPT.func,
     dtw: RPT.array,
     dtwError: RPT.bool,
     dtwPending: RPT.bool,
-    fetchContours: RPT.func.isRequired,
+    fetchReferences: RPT.func.isRequired,
     uploadPending: RPT.bool
   }
 
   componentDidMount() {
-    const { fetchContours } = this.props;
-    // fetchContours();
-  }
-
-  renderContour() {
-    const { contours } = this.props;
-    if (!contours) return null;
-
-    const data = contours.reduce((prev, x, idx) =>
-      [...prev, {
-        label: `chart${idx}`,
-        values: Object.keys(x.timeline).reduce((prev2, key) =>
-          [...prev2, { x: parseInt(key, 10), y: x.timeline[key] }]
-        , [])
-      }]
-    , []);
-
-    return (
-      <LineChart
-        data={data}
-        width={600}
-        height={200}
-      />
-    );
-  }
-
-  renderDtw() {
-    const { dtw } = this.props;
-    if (!dtw) return null;
-
-    const data = [{
-      label: 'name',
-      values: dtw.reduce((prev, val) =>
-          [...prev, { x: parseInt(val.split(', ')[0], 10), y: parseInt(val.split(', ')[1], 10) }]
-        , [])
-    }];
-
-    return (
-      <LineChart
-        data={data}
-        width={600}
-        height={200}
-      />
-    );
+    const { fetchReferences } = this.props;
+    fetchReferences();
   }
 
   render() {
-    const { contoursError, contoursPending, deleteAll, uploadPending } = this.props;
+    const { referencesError, referencesPending, deleteAllReference, startProcessing, uploadPending } = this.props;
 
     return (
       <div>
         <div>
-          <button onClick={() => deleteAll()}>Smazat vše</button>
+          <h1>Referenční obrázky</h1>
+          <button onClick={() => deleteAllReference()}>Smazat vše</button>
           <FileUpload
             allowedFileTypes={['jpg', 'jpeg', 'png']}
             data={{ type: 'picture' }}
             dropzoneId="fileUpload"
             multiple
-            url="/webapi/contours"
+            url="/webapi/reference"
           >
             <button>
-              Klikněte nebo přetáhněte JPG soubory
+              Klikněte nebo přetáhněte referenční obrázky (JPG)
             </button>
           </FileUpload>
         </div>
-        {contoursError && <p>Došlo k chybě. Určitě běží API?</p>}
+        {referencesError && <p>Došlo k chybě. Určitě běží API?</p>}
         {uploadPending && <p>Odesílám fotky...</p>}
-        {contoursPending && <p>Stahuji data a zpracovávám grafy...</p>}
-        {this.renderContour()}
-        {this.renderDtw()}
+        {referencesPending && <p>Stahuji data a zpracovávám grafy...</p>}
+
+        <h1>Obrázky k porovnání</h1>
+
+        <button onClick={() => startProcessing()}>Spustit výpočet</button>
       </div>
     );
   }

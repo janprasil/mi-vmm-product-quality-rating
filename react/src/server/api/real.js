@@ -3,8 +3,8 @@ import modRewrite from 'connect-modrewrite';
 
 const app = express();
 
-const apiUrl = 'http://f2062087.ngrok.io/api';
-
+const apiUrl = process.env.API_URL;
+console.log(apiUrl)
 app.use(modRewrite([
   `^/webapi/(.*)$ ${apiUrl}/$1 [P]`
 ]));

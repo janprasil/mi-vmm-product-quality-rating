@@ -3,28 +3,29 @@ import { Record, Map } from 'immutable';
 
 const State = Record({
   contours: new Map(),
-  dtw: new Map()
+  dtw: new Map(),
+  references: new Map(),
 }, 'api');
 
 const apiReducer = (state = new State(), action) => {
   switch (action.type) {
-    case actions.FETCH_CONTOURS_START: {
+    case actions.FETCH_REFERENCES_START: {
       return state
-        .setIn(['contours', 'error'], false)
-        .setIn(['contours', 'pending'], true);
+        .setIn(['references', 'error'], false)
+        .setIn(['references', 'pending'], true);
     }
 
-    case actions.FETCH_CONTOURS_SUCCESS: {
+    case actions.FETCH_REFERENCES_SUCCESS: {
       return state
-        .setIn(['contours', 'data'], action.payload)
-        .setIn(['contours', 'error'], false)
-        .setIn(['contours', 'pending'], false);
+        .setIn(['references', 'data'], action.payload)
+        .setIn(['references', 'error'], false)
+        .setIn(['references', 'pending'], false);
     }
 
-    case actions.FETCH_CONTOURS_ERROR: {
+    case actions.FETCH_REFERENCES_ERROR: {
       return state
-        .setIn(['contours', 'error'], true)
-        .setIn(['contours', 'pending'], false);
+        .setIn(['references', 'error'], true)
+        .setIn(['references', 'pending'], false);
     }
 
     case actions.FETCH_DTW_START: {
@@ -50,6 +51,10 @@ const apiReducer = (state = new State(), action) => {
       return state
         .deleteIn(['contours', 'data'])
         .deleteIn(['dtw', 'data']);
+    }
+
+    case 'FILE_UPLOAD_MULTIPLE_FILE_UPLOAD_SUCCESS': {
+
     }
 
     default:
