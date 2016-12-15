@@ -33,6 +33,14 @@ namespace vmm.api
         {
             app.UseStaticFiles();
 
+            //env.EnvironmentName = EnvironmentName.Production;
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+            }
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 

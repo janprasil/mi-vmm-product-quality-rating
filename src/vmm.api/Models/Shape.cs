@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace vmm.api.Models
 {
-    public class Shape
+    public class Shape : IModel
     {
         public string ImageUrl { get; set; }
         public string ContourImageUrl { get; set; }

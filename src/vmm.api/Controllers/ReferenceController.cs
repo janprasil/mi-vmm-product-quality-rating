@@ -24,10 +24,14 @@ namespace vmm.api.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> Get()
+        public async Task<JsonResult> Get(string id)
         {
-            var results = await dbManager.GetAllAsync<Shape>();
-            return Json(results);
+            if (id == null)
+            {
+                var results = await dbManager.GetAllAsync<Shape>();
+                return Json(results);
+            }
+            return Json(await dbManager.GetAsync<Shape>(new string[] { "ReferenceSamples", id }));
         }
 
         [HttpPut]
@@ -37,11 +41,11 @@ namespace vmm.api.Controllers
             var shape = post.Object;
             shape.CannyTreshold = ct;
             shape.CannyTreshodLinking = ctl;
-            var result = contoursManager.Detect(shape.LocalPath, shape.ContourLocalPath);
+            var result = contoursManager.Detect(shape.LocalPath, shape.ContourLocalPath, ct, ctl);
 
             await dbManager.PutAsync(id, result);
 
-            return await Get();
+            return await Get(null);
         }
 
         [HttpPost]
@@ -50,10 +54,10 @@ namespace vmm.api.Controllers
             foreach (var file in Request.Form.Files)
             {
                 var path = appEnvironment.ContentRootPath;
-                var filename = $@"{path}\wwwroot\uploads\originals\{file.FileName}";
-                var target = $@"{path}\wwwroot\uploads\contures\{file.FileName}";
-                var contourUrlTarget = $"/uploads/contours/{file.FileName}";
-                var urlTarget = $"/uploads/originals/{file.FileName}";
+                var filename = $@"{path}\wwwroot\uploads\references\originals\{file.FileName}";
+                var target = $@"{path}\wwwroot\uploads\references\contours\{file.FileName}";
+                var contourUrlTarget = $"/uploads/references/contours/{file.FileName}";
+                var urlTarget = $"/uploads/references/originals/{file.FileName}";
                 using (var fs = System.IO.File.Create(filename))
                 {
                     file.CopyTo(fs);
@@ -68,16 +72,23 @@ namespace vmm.api.Controllers
                 await dbManager.PostAsync(result);
             }
 
-            return await Get();
+            return await Get(null);
         }
+
+        [HttpDelete]
+        public async Task<JsonResult> Delete(string id)
+        {
+            await dbManager.DeleteAsync(new string[] { "ReferenceSamples", id });
+            return await Get(null);
+        }
+
 
         [HttpDelete]
         [Route("all")]
         public async Task<JsonResult> DeleteAll()
         {
             await dbManager.DeleteAllAsync<Shape>();
-            var results = await dbManager.GetAllAsync<Shape>();
-            return Json(results);
+            return await Get(null);
         }
     }
 }

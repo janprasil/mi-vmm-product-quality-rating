@@ -20,7 +20,9 @@
     "EntityFramework": "6.1.3",
     "Microsoft.EntityFrameworkCore": "1.0.1",
     "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0",
-    "FirebaseDatabase.net": "1.1.5"
+    "FirebaseDatabase.net": "1.1.5",
+    "Microsoft.AspNetCore.Diagnostics": "1.0.0",
+    "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.0.0"
   },
 
   "tools": {

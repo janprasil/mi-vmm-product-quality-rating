@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using vmm.api.Models;
+using System.Collections;
 
 namespace vmm.api.Services
 {
@@ -18,12 +19,20 @@ namespace vmm.api.Services
             //var api = "AIzaSyDfevwNo9zhgMZ2__Bi0_-v-LKaQj3Jq90"; // API key - not used at this time
             firebase = new FirebaseClient(FIREBASE_URL);
         }
-
+        
         public async Task DeleteAllAsync<T>()
         {
             var type = getNodeName(typeof(T));
             if (type == null) throw new ChildNotExists();
-            await firebase.Child(type).OrderByKey().DeleteAsync();
+            await firebase.Child(type).DeleteAsync();
+        }
+
+        public async Task DeleteAsync(string[] path)
+        {
+            if (path.Count() < 1) return;
+            var nesting = firebase.Child(path[0]);
+            for (var i = 1; i < path.Count(); i++ ) nesting = nesting.Child(path[i]);
+            await nesting.DeleteAsync();
         }
 
         public async Task DeleteAsync<T>(string name)
@@ -40,6 +49,25 @@ namespace vmm.api.Services
             return await firebase.Child(type).OrderByKey().OnceAsync<T>();
         }
 
+        public async Task<IReadOnlyCollection<FirebaseObject<T>>> GetAllAsync<T>(string[] path)
+        {
+            if (path.Count() < 1) return null;
+
+            var nesting = firebase.Child(path[0]);
+            for (var i = 1; i < path.Count(); i++) nesting = nesting.Child(path[i]);
+            var result = await nesting.OnceAsync<T>();
+            return result;
+        }
+
+        public async Task<T> GetAsync<T>(string[] path)
+        {
+            if (path.Count() < 1) return default(T);
+            var nesting = firebase.Child(path[0]);
+            for (var i = 1; i < path.Count(); i++) nesting = nesting.Child(path[i]);
+            //var result = await nesting.OrderByKey().EqualTo(path.ElementAt(path.Count() - 1)).OnceSingleAsync<T>();
+            return await nesting.OnceSingleAsync<T>();
+        }
+
         public async Task<FirebaseObject<T>> GetAsync<T>(string name)
         {
             var type = getNodeName(typeof(T));
@@ -49,11 +77,28 @@ namespace vmm.api.Services
             return items.FirstOrDefault();
         }
 
-        public async Task<FirebaseObject<T>> PostAsync<T>(T o)
+        public async Task<FirebaseObject<T>> PostAsync<T>(string[] path, T o) where T : IModel
+        {
+            if (path.Count() < 1) return null;
+            var nesting = firebase.Child(path[0]);
+            for (var i = 1; i < path.Count(); i++) nesting = nesting.Child(path[i]);
+            return await nesting.PostAsync(o);
+        }
+
+        public async Task<FirebaseObject<T>> PostAsync<T>(T o) where T : IModel
         {
             var type = getNodeName(typeof(T));
             if (type == null) throw new ChildNotExists();
             return await firebase.Child(type).PostAsync(o);
+        }
+
+
+        public async Task PutAsync(string[] path, object o)
+        {
+            if (path.Count() < 1) return;
+            var nesting = firebase.Child(path[0]);
+            for (var i = 1; i < path.Count(); i++) nesting = nesting.Child(path[i]);
+            await nesting.PutAsync(o);
         }
 
         public async Task PutAsync<T>(string name, T o)
@@ -69,7 +114,32 @@ namespace vmm.api.Services
             {
                 return "ReferenceSamples";
             }
+            if (t.Equals(typeof(List<Shape>)))
+            {
+                return "Images";
+            }
             return null;
+        }
+
+        public async Task<KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>> PostAllAsync<T>(IEnumerable<T> o)
+        {
+            var type = getNodeName(o.GetType());
+            if (type == null) throw new ChildNotExists();
+            var node = await firebase.Child(type).PostAsync(true);
+            foreach (var x in o) await firebase.Child(type).Child(node.Key).PostAsync(x);
+            return new KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>(node.Key, await GetAllAsync<T>(new String[] { type, node.Key }));
+        }
+
+        public async Task<KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>> PostAllAsync<T>(string[] path, IEnumerable<T> o)
+        {
+            if (path.Count() < 1) return new KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>(null, null);
+            var nesting = firebase.Child(path[0]);
+            for (var i = 1; i < path.Count(); i++) nesting = nesting.Child(path[i]);
+            var node = await nesting.PostAsync(true);
+            foreach (var x in o) await nesting.Child(node.Key).PostAsync(x);
+            var pathWithKey = path.ToList();
+            pathWithKey.Add(node.Key);
+            return new KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>(node.Key, await GetAllAsync<T>(pathWithKey.ToArray()));
         }
     }
 }

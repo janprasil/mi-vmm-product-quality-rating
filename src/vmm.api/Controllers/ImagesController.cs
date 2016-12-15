@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Firebase.Database;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using vmm.api.Data;
 using vmm.api.Models;
@@ -24,33 +27,43 @@ namespace vmm.api.Controllers
         }
 
         [HttpGet]
-        [Route("firebase")]
-        public async Task<JsonResult> GetFirebase()
+        public async Task<JsonResult> Get(String sessionId, String id)
         {
-            var result = await dbManager.PostAsync(new Shape()
-            {
-                Center = new Emgu.CV.Structure.MCvPoint2D64f(1.2, 3.4),
-                ImageUrl = "http/test"
-            });
-            return Json(result);
+            if (sessionId == null) return Json(await dbManager.GetAllAsync<List<Shape>>());
+            else if (id == null) return Json(await dbManager.GetAllAsync<Shape>(new string[] { "Images", sessionId }));
+            return Json(await dbManager.GetAsync<Shape>(new string[] { "Images", sessionId, id }));
         }
 
-        [HttpGet]
-        public JsonResult Get()
+        [HttpPut]
+        public async Task<JsonResult> Put(string sessionId, string id, double ct, double ctl) 
         {
-            return Json(ShapeStorage.list);
+            var shape = await dbManager.GetAsync<Shape>(new string[] { "Images", sessionId, id.ToString() });
+            if (shape == null) return Json(new { id = "not_found", message = "Image or session was not found" });
+            var result = contoursManager.Detect(shape.LocalPath, shape.ContourLocalPath, ct, ctl);
+
+            shape.CannyTreshold = ct;
+            shape.CannyTreshodLinking = ctl;
+            shape.Center = result.Center;
+            shape.Points = result.Points;
+            shape.Timeline = result.Timeline;
+
+            await dbManager.PutAsync(new string[] { "Images", sessionId, id.ToString() } , shape);
+
+            return await Get(sessionId, null);
         }
+
 
         [HttpPost]
-        public JsonResult Post()
+        public async Task<JsonResult> Post()
         {
+            var list = new List<Shape>();
             foreach (var file in Request.Form.Files)
             {
                 var path = appEnvironment.ContentRootPath;
-                var filename = $@"{path}\uploads\{file.FileName}";
-                var contoursFilename = $"{file.FileName}.contures.jpeg";
-                var target = $@"{path}\wwwroot\uploads\{contoursFilename}";
-                var urlTarget = $"{HttpContext.Request.Host}/uploads/{contoursFilename}";
+                var filename = $@"{path}\wwwroot\uploads\originals\{file.FileName}";
+                var target = $@"{path}\wwwroot\uploads\contours\{file.FileName}";
+                var contourUrlTarget = $"/uploads/contours/{file.FileName}";
+                var urlTarget = $"/uploads/originals/{file.FileName}";
 
                 using (var fs = System.IO.File.Create(filename))
                 {
@@ -60,17 +73,28 @@ namespace vmm.api.Controllers
                 var result = contoursManager.Detect(filename, target);
 
                 result.ImageUrl = urlTarget;
-                ShapeStorage.list.Add(result);
+                result.ContourImageUrl = contourUrlTarget;
+                result.LocalPath = filename;
+                result.ContourLocalPath = target;
+                //ShapeStorage.list.Add(result);
+                list.Add(result);
             }
-
-            return Json(string.Empty);
+            var session = await dbManager.PostAllAsync(list);
+            return Json(session);
         }
 
         [HttpDelete]
-        public JsonResult Delete()
+        public async Task<JsonResult> Delete(string sessionId, string id)
         {
-            ShapeStorage.list.Clear();
-            return Json(string.Empty);
+            if (sessionId == null) return null;
+            if (id == null)
+            {
+                await dbManager.DeleteAsync(new string[] { "Images", sessionId });
+                return Json(new { id = "session_deleted", message="Session was removed" });
+            }
+            await dbManager.DeleteAsync(new string[] { "Images", sessionId, id });
+            return Json(new { id = "image_deleted", message = "Image was removed" });
+            
         }
     }
 
