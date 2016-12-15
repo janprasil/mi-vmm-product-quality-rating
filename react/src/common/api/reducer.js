@@ -19,6 +19,8 @@ const apiReducer = (state = new State(), action) => {
         .setIn(['references', 'pending'], true);
     }
 
+    case actions.PUT_REFERENCE_SUCCESS:
+    case actions.DELETE_ALL_REFERENCES_SUCCESS:
     case actions.FETCH_REFERENCES_SUCCESS: {
       return state
         .setIn(['references', 'data'], transformReferences(action.payload))
