@@ -3,6 +3,8 @@ import 'isomorphic-fetch';
 
 export const FETCH_REFERENCES_SUCCESS = 'FETCH_REFERENCES_SUCCESS';
 export const FETCH_REFERENCES_ERROR = 'FETCH_REFERENCES_ERROR';
+export const PUT_REFERENCE_SUCCESS = 'PUT_REFERENCE_SUCCESS';
+export const DELETE_ALL_REFERENCES_SUCCESS = 'DELETE_ALL_REFERENCES_SUCCESS';
 
 export const FETCH_DTW_SUCCESS = 'FETCH_DTW_SUCCESS';
 export const FETCH_DTW_ERROR = 'FETCH_DTW_ERROR';
@@ -27,6 +29,14 @@ export function deleteAllReference() {
   return {
     type: 'DELETE_ALL_REFERENCES',
     payload: fetch('/webapi/reference/all', { method: 'DELETE' }).then(res => res.json())
+  };
+}
+
+export function putReference(id, ct, ctl) {
+  console.log(id, ct, ctl)
+  return {
+    type: 'PUT_REFERENCE',
+    payload: fetch(`/webapi/reference?id=${id}&ct=${ct}&ctl=${ctl}`, { method: 'PUT' }).then(res => res.json())
   };
 }
 
