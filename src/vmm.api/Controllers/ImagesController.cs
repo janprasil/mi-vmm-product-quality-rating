@@ -1,12 +1,8 @@
-﻿using Firebase.Database;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using vmm.api.Data;
 using vmm.api.Models;
 using vmm.api.Services;
 
@@ -27,7 +23,7 @@ namespace vmm.api.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> Get(String sessionId, String id)
+        public async Task<JsonResult> Get(string sessionId, string id = null)
         {
             if (sessionId == null) return Json(await dbManager.GetAllAsync<List<Shape>>());
             else if (id == null) return Json(await dbManager.GetAllAsync<Shape>(new string[] { "Images", sessionId }));
@@ -35,7 +31,7 @@ namespace vmm.api.Controllers
         }
 
         [HttpPut]
-        public async Task<JsonResult> Put(string sessionId, string id, double ct, double ctl) 
+        public async Task<JsonResult> Put(string sessionId, string id, double ct, double ctl)
         {
             var shape = await dbManager.GetAsync<Shape>(new string[] { "Images", sessionId, id.ToString() });
             if (shape == null) return Json(new { id = "not_found", message = "Image or session was not found" });
@@ -47,11 +43,10 @@ namespace vmm.api.Controllers
             shape.Points = result.Points;
             shape.Timeline = result.Timeline;
 
-            await dbManager.PutAsync(new string[] { "Images", sessionId, id.ToString() } , shape);
+            await dbManager.PutAsync(new string[] { "Images", sessionId, id.ToString() }, shape);
 
-            return await Get(sessionId, null);
+            return await Get(sessionId);
         }
-
 
         [HttpPost]
         public async Task<JsonResult> Post()
@@ -90,11 +85,10 @@ namespace vmm.api.Controllers
             if (id == null)
             {
                 await dbManager.DeleteAsync(new string[] { "Images", sessionId });
-                return Json(new { id = "session_deleted", message="Session was removed" });
+                return Json(new { id = "session_deleted", message = "Session was removed" });
             }
             await dbManager.DeleteAsync(new string[] { "Images", sessionId, id });
             return Json(new { id = "image_deleted", message = "Image was removed" });
-            
         }
     }
 
