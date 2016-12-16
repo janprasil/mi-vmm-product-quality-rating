@@ -55,22 +55,11 @@ const apiReducer = (state = new State(), action) => {
         .setIn(['images', 'pending'], false);
     }
 
-    case actions.FETCH_DTW_START: {
+    case actions.START_PROCESSING_SUCCESS: {
+      console.log(action.payload)
       return state
+        .setIn(['dtw', 'data'], action.payload[0].object.result)
         .setIn(['dtw', 'error'], false)
-        .setIn(['dtw', 'pending'], true);
-    }
-
-    case actions.FETCH_DTW_SUCCESS: {
-      return state
-        .setIn(['dtw', 'data'], action.payload)
-        .setIn(['dtw', 'error'], false)
-        .setIn(['dtw', 'pending'], false);
-    }
-
-    case actions.FETCH_DTW_ERROR: {
-      return state
-        .setIn(['dtw', 'error'], true)
         .setIn(['dtw', 'pending'], false);
     }
 

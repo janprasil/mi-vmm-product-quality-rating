@@ -1,11 +1,10 @@
+import Dtw from './Dtw.react';
 import Images from './Images.react';
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import References from './References.react';
-import Slider from 'rc-slider';
 import { connect } from 'react-redux';
 import { fetchReferences, startProcessing } from '../../common/api/actions';
 import { FileUpload } from 'redux-file-upload';
-import { LineChart } from 'react-d3-components';
 
 @connect(state => ({
   referencesError: state.api.getIn(['references', 'error']),
@@ -46,6 +45,7 @@ export default class Page extends Component {
           ? <button onClick={() => startProcessing(sessionId, selectedReference)}>Spustit výpočet</button>
           : <p>Před pokračováním nahrajte obrázky k porovnání a zvolte referenční obrázek.</p>
         }
+        <Dtw />
       </div>
     );
   }
