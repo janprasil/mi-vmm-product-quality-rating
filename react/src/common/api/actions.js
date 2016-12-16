@@ -33,25 +33,25 @@ export function putReference(id, ct, ctl) {
   };
 }
 
-export function fetchImages() {
+export function fetchImages(sessionId) {
   return {
     type: 'FETCH_IMAGES',
-    payload: fetch('/webapi/images').then(res => res.json())
+    payload: fetch(`/webapi/images?${sessionId}`).then(res => res.json())
   };
 }
 
-export function deleteAllImages() {
+export function deleteAllImages(sessionId) {
   return {
     type: 'DELETE_ALL_IMAGES',
-    payload: fetch('/webapi/images/all', { method: 'DELETE' }).then(res => res.json())
+    payload: fetch(`/webapi/images/all?${sessionId}`, { method: 'DELETE' }).then(res => res.json())
   };
 }
 
-export function putImage(id, ct, ctl) {
+export function putImage(sessionId, id, ct, ctl) {
   console.log(id, ct, ctl)
   return {
     type: 'PUT_IMAGE',
-    payload: fetch(`/webapi/images?id=${id}&ct=${ct}&ctl=${ctl}`, { method: 'PUT' }).then(res => res.json())
+    payload: fetch(`/webapi/images?sessionId=${sessionId}&id=${id}&ct=${ct}&ctl=${ctl}`, { method: 'PUT' }).then(res => res.json())
   };
 }
 

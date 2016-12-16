@@ -3,9 +3,11 @@ require('rc-slider/assets/index.css');
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import Slider from 'rc-slider';
 import { connect } from 'react-redux';
-import { fetchReferences, deleteAllReference, putReference } from '../../common/api/actions';
+import { putImage, putReference } from '../../common/api/actions';
 
-@connect(null, { putReference })
+@connect(state => ({
+  sessionId: state.app.get('sessionId')
+}), { putImage, putReference })
 export default class ImagePair extends Component {
 
   static propTypes = {
@@ -14,12 +16,14 @@ export default class ImagePair extends Component {
     contourUrl: RPT.string,
     id: RPT.string,
     imageUrl: RPT.string,
+    pairType: RPT.oneOf(['reference', 'image']),
+    putImage: RPT.func,
     putReference: RPT.func,
-    pairType: RPT.oneOf(['reference', 'image'])
+    sessionId: RPT.string,
   }
 
   render() {
-    const { id, imageUrl, contourUrl, cannyTreshodLinking, cannyTreshold, putReference } = this.props;
+    const { id, imageUrl, contourUrl, cannyTreshodLinking, cannyTreshold, putImage, putReference, pairType, sessionId } = this.props;
     return (
       <div style={styles.imageWrapper}>
         <img src={imageUrl} style={styles.image} />
@@ -31,7 +35,7 @@ export default class ImagePair extends Component {
           step={5}
           onAfterChange={(x) => pairType === 'reference'
             ? putReference(id, x, cannyTreshodLinking)
-            : putImage(id, x, cannyTreshodLinking)}
+            : putImage(sessionId, id, x, cannyTreshodLinking)}
           defaultValue={cannyTreshold}
         />
         <p>cannyThresholdLinking</p>
@@ -41,7 +45,7 @@ export default class ImagePair extends Component {
           step={5}
           onAfterChange={(x) => pairType === 'reference'
             ? putReference(id, cannyTreshold, x)
-            : putImage(id, cannyTreshold, x)}
+            : putImage(sessionId, id, cannyTreshold, x)}
           defaultValue={cannyTreshodLinking}
         />
       </div>

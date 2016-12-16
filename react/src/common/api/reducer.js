@@ -40,7 +40,7 @@ const apiReducer = (state = new State(), action) => {
         .setIn(['images', 'pending'], true);
     }
 
-    case actions.PUT_IMAGESSUCCESS:
+    case actions.PUT_IMAGE_SUCCESS:
     case actions.DELETE_ALL_IMAGES_SUCCESS:
     case actions.FETCH_IMAGES_SUCCESS: {
       return state
@@ -74,8 +74,20 @@ const apiReducer = (state = new State(), action) => {
         .setIn(['dtw', 'pending'], false);
     }
 
-    case 'FILE_UPLOAD_MULTIPLE_FILE_UPLOAD_SUCCESS': {
+    case 'FILE_UPLOAD_COMPLETE': {
+      const { response } = action.payload;
+      console.log(response)
+      if (response.key) {
+        return state
+          .setIn(['images', 'data'], transformData(response.value))
+          .setIn(['images', 'error'], false)
+          .setIn(['images', 'pending'], false);
+      }
 
+      return state
+        .setIn(['references', 'data'], transformData(response))
+        .setIn(['references', 'error'], false)
+        .setIn(['references', 'pending'], false);
     }
 
     default:

@@ -2,18 +2,17 @@ import ImagePair from './ImagePair.react';
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import Slider from 'rc-slider';
 import { connect } from 'react-redux';
-import { fetchReferences, deleteAllReferences, putReference } from '../../common/api/actions';
+import { fetchReferences, deleteAllReferences } from '../../common/api/actions';
 import { FileUpload } from 'redux-file-upload';
 
 @connect(state => ({
   references: state.api.getIn(['references', 'data'])
-}), { fetchReferences, deleteAllReferences, putReference })
+}), { fetchReferences, deleteAllReferences })
 export default class References extends Component {
 
   static propTypes = {
     deleteAllReferences: RPT.func,
     fetchReferences: RPT.func.isRequired,
-    putReference: RPT.func,
     references: RPT.array
   }
 

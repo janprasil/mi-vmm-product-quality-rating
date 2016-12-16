@@ -5712,9 +5712,9 @@ redux-actions@^0.10.1:
   dependencies:
     reduce-reducers "^0.1.0"
 
-redux-file-upload:
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/redux-file-upload/-/redux-file-upload-0.0.16.tgz#5c0fd2de0a31433c9f703a6112c7ab38f3a56d80"
+redux-file-upload@0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/redux-file-upload/-/redux-file-upload-0.0.18.tgz#19654066fa93aa0565af523c94b34bad8b83138d"
   dependencies:
     bluebird ">=3"
     core-decorators ">=0.12"
@@ -5729,10 +5729,6 @@ redux-logger@^2.1.1:
   resolved "https://registry.yarnpkg.com/redux-logger/-/redux-logger-2.7.0.tgz#77f0ee5c473b1440c7e1b3c3c7775e59741c5dbf"
   dependencies:
     deep-diff "0.3.4"
-
-redux-saga@^0.13.0:
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/redux-saga/-/redux-saga-0.13.0.tgz#9294386550deb0d56bc9a1b3c90a613e7ddb6593"
 
 redux-storage-decorator-debounce@^1.0.0:
   version "1.1.1"

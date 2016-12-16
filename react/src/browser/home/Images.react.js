@@ -2,24 +2,17 @@ import ImagePair from './ImagePair.react';
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import Slider from 'rc-slider';
 import { connect } from 'react-redux';
-import { fetchImages, deleteAllImages, putImage } from '../../common/api/actions';
+import { deleteAllImages, putImage } from '../../common/api/actions';
 import { FileUpload } from 'redux-file-upload';
 
 @connect(state => ({
   images: state.api.getIn(['images', 'data'])
-}), { fetchImages, deleteAllImages, putImage })
+}), { deleteAllImages })
 export default class Images extends Component {
 
   static propTypes = {
     deleteAllImages: RPT.func,
-    fetchImages: RPT.func.isRequired,
-    putImage: RPT.func,
     images: RPT.array
-  }
-
-  componentDidMount() {
-    const { fetchImages } = this.props;
-    fetchImages();
   }
 
   renderImage(key, reference) {
