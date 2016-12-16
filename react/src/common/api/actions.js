@@ -18,14 +18,7 @@ export function fetchReferences() {
   };
 }
 
-export function fetchDtw() {
-  return {
-    type: 'FETCH_DTW',
-    payload: fetch('/webapi/contours/dtw').then(res => res.json())
-  };
-}
-
-export function deleteAllReference() {
+export function deleteAllReferences() {
   return {
     type: 'DELETE_ALL_REFERENCES',
     payload: fetch('/webapi/reference/all', { method: 'DELETE' }).then(res => res.json())
@@ -37,6 +30,35 @@ export function putReference(id, ct, ctl) {
   return {
     type: 'PUT_REFERENCE',
     payload: fetch(`/webapi/reference?id=${id}&ct=${ct}&ctl=${ctl}`, { method: 'PUT' }).then(res => res.json())
+  };
+}
+
+export function fetchImages() {
+  return {
+    type: 'FETCH_IMAGES',
+    payload: fetch('/webapi/images').then(res => res.json())
+  };
+}
+
+export function deleteAllImages() {
+  return {
+    type: 'DELETE_ALL_IMAGES',
+    payload: fetch('/webapi/images/all', { method: 'DELETE' }).then(res => res.json())
+  };
+}
+
+export function putImage(id, ct, ctl) {
+  console.log(id, ct, ctl)
+  return {
+    type: 'PUT_IMAGE',
+    payload: fetch(`/webapi/images?id=${id}&ct=${ct}&ctl=${ctl}`, { method: 'PUT' }).then(res => res.json())
+  };
+}
+
+export function fetchDtw() {
+  return {
+    type: 'FETCH_DTW',
+    payload: fetch('/webapi/contours/dtw').then(res => res.json())
   };
 }
 

@@ -2,12 +2,12 @@ import * as actions from './actions';
 import { Record, Map } from 'immutable';
 
 const State = Record({
-  contours: new Map(),
+  images: new Map(),
   dtw: new Map(),
   references: new Map(),
 }, 'api');
 
-function transformReferences(data) {
+function transformData(data) {
   return data.reduce((prev, x) => prev.set(x.key, Map(x.object)), Map());
 }
 
@@ -23,7 +23,7 @@ const apiReducer = (state = new State(), action) => {
     case actions.DELETE_ALL_REFERENCES_SUCCESS:
     case actions.FETCH_REFERENCES_SUCCESS: {
       return state
-        .setIn(['references', 'data'], transformReferences(action.payload))
+        .setIn(['references', 'data'], transformData(action.payload))
         .setIn(['references', 'error'], false)
         .setIn(['references', 'pending'], false);
     }
@@ -32,6 +32,27 @@ const apiReducer = (state = new State(), action) => {
       return state
         .setIn(['references', 'error'], true)
         .setIn(['references', 'pending'], false);
+    }
+
+    case actions.FETCH_IMAGES_START: {
+      return state
+        .setIn(['images', 'error'], false)
+        .setIn(['images', 'pending'], true);
+    }
+
+    case actions.PUT_IMAGESSUCCESS:
+    case actions.DELETE_ALL_IMAGES_SUCCESS:
+    case actions.FETCH_IMAGES_SUCCESS: {
+      return state
+        .setIn(['images', 'data'], transformData(action.payload))
+        .setIn(['images', 'error'], false)
+        .setIn(['images', 'pending'], false);
+    }
+
+    case actions.FETCH_IMAGES_ERROR: {
+      return state
+        .setIn(['images', 'error'], true)
+        .setIn(['images', 'pending'], false);
     }
 
     case actions.FETCH_DTW_START: {
@@ -51,12 +72,6 @@ const apiReducer = (state = new State(), action) => {
       return state
         .setIn(['dtw', 'error'], true)
         .setIn(['dtw', 'pending'], false);
-    }
-
-    case actions.DELETE_ALL_SUCCESS: {
-      return state
-        .deleteIn(['contours', 'data'])
-        .deleteIn(['dtw', 'data']);
     }
 
     case 'FILE_UPLOAD_MULTIPLE_FILE_UPLOAD_SUCCESS': {
