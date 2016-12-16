@@ -76,16 +76,16 @@ const apiReducer = (state = new State(), action) => {
 
     case 'FILE_UPLOAD_COMPLETE': {
       const { response } = action.payload;
-      console.log(response)
+
       if (response.key) {
         return state
-          .setIn(['images', 'data'], transformData(response.value))
+          .mergeIn(['images', 'data'], transformData(response.value))
           .setIn(['images', 'error'], false)
           .setIn(['images', 'pending'], false);
       }
 
       return state
-        .setIn(['references', 'data'], transformData(response))
+        .mergeIn(['references', 'data'], transformData(response))
         .setIn(['references', 'error'], false)
         .setIn(['references', 'pending'], false);
     }

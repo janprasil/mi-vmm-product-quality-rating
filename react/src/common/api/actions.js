@@ -62,9 +62,9 @@ export function fetchDtw() {
   };
 }
 
-export function startProcessing() {
+export function startProcessing(sessionId, referenceId) {
   return {
     type: 'START_PROCESSING',
-    payload: fetch('/webapi/reference?id=2&ct=23.23&ctl=23', { method: 'PUT' }).then(res => res.json())
+    payload: fetch(`/webapi/dtw?sessionId=${sessionId}&referenceId=${referenceId}`).then(res => res.json())
   }
 }
