@@ -23,6 +23,13 @@ namespace vmm.api.Controllers
         }
 
         [HttpGet]
+        [Route("session")]
+        public JsonResult CreateSession()
+        {
+            return Json(new { sessionId = Guid.NewGuid() });
+        }
+
+        [HttpGet]
         public async Task<JsonResult> Get(string sessionId, string id = null)
         {
             if (sessionId == null) return Json(await dbManager.GetAllAsync<List<Shape>>());
@@ -57,6 +64,7 @@ namespace vmm.api.Controllers
         [HttpPost]
         public async Task<JsonResult> Post()
         {
+            var sessionId = Request.Form["sessionId"];
             var list = new List<Shape>();
             foreach (var file in Request.Form.Files)
             {
@@ -80,7 +88,7 @@ namespace vmm.api.Controllers
                 //ShapeStorage.list.Add(result);
                 list.Add(result);
             }
-            var session = await dbManager.PostAllAsync(list);
+            var session = await dbManager.PostAllInSessionAsync(sessionId, list);
             return Json(session);
         }
 

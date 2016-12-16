@@ -1,5 +1,4 @@
 ﻿using Firebase.Database;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using vmm.api.Models;
@@ -11,6 +10,8 @@ namespace vmm.api.Services
         Task<FirebaseObject<T>> PostAsync<T>(T o) where T : IModel;
 
         Task<KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>> PostAllAsync<T>(IEnumerable<T> o);
+
+        Task<KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>> PostAllInSessionAsync<T>(string sessionId, IEnumerable<T> o);
 
         Task PutAsync<T>(string s, T o);
 
@@ -33,6 +34,5 @@ namespace vmm.api.Services
         Task<T> GetAsync<T>(string[] path);
 
         Task DeleteAsync(string[] path);
-
     }
 }

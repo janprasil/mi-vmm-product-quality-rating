@@ -1,10 +1,7 @@
 ﻿using Firebase.Database;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Threading.Tasks;
-using vmm.api.Data;
 using vmm.api.Models;
 using vmm.api.Services;
 
@@ -25,7 +22,6 @@ namespace vmm.api.Controllers
         [HttpGet]
         public async Task<JsonResult> runDtw(string sessionId, string referenceId)
         {
-
             var result = new List<FirebaseObject<Result>>();
             var images = await dbManager.GetAllAsync<Shape>(new string[] { "Images", sessionId });
             var reference = await dbManager.GetAsync<Shape>(new string[] { "ReferenceSamples", referenceId });
@@ -34,7 +30,8 @@ namespace vmm.api.Controllers
             if (reference == null) return Json(new { id = "NO_REFERENCE_SELECTED" });
             foreach (var x in images)
             {
-                var r = new Result() {
+                var r = new Result()
+                {
                     result = contoursManager.DynamicTimeWarping(reference, x.Object),
                     imageId = x.Key,
                     referenceId = referenceId

@@ -121,13 +121,21 @@ namespace vmm.api.Services
             return null;
         }
 
+        public async Task<KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>> PostAllInSessionAsync<T>(string sessionId, IEnumerable<T> o)
+        {
+            var type = getNodeName(o.GetType());
+            if (type == null) throw new ChildNotExists();
+            foreach (var x in o) await firebase.Child(type).Child(sessionId).PostAsync(x);
+            return new KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>(sessionId, await GetAllAsync<T>(new string[] { type, sessionId }));
+        }
+
         public async Task<KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>> PostAllAsync<T>(IEnumerable<T> o)
         {
             var type = getNodeName(o.GetType());
             if (type == null) throw new ChildNotExists();
             var node = await firebase.Child(type).PostAsync(true);
             foreach (var x in o) await firebase.Child(type).Child(node.Key).PostAsync(x);
-            return new KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>(node.Key, await GetAllAsync<T>(new String[] { type, node.Key }));
+            return new KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>(node.Key, await GetAllAsync<T>(new string[] { type, node.Key }));
         }
 
         public async Task<KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>> PostAllAsync<T>(string[] path, IEnumerable<T> o)
