@@ -3,17 +3,21 @@ import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import Slider from 'rc-slider';
 import { connect } from 'react-redux';
 import { fetchReferences, deleteAllReferences } from '../../common/api/actions';
+import { selectReference } from '../../common/app/actions';
 import { FileUpload } from 'redux-file-upload';
 
 @connect(state => ({
-  references: state.api.getIn(['references', 'data'])
-}), { fetchReferences, deleteAllReferences })
+  references: state.api.getIn(['references', 'data']),
+  selectedReference: state.app.get('selectedReference')
+}), { fetchReferences, deleteAllReferences, selectReference })
 export default class References extends Component {
 
   static propTypes = {
     deleteAllReferences: RPT.func,
     fetchReferences: RPT.func.isRequired,
-    references: RPT.array
+    references: RPT.array,
+    selectReference: RPT.func,
+    selectedReference: RPT.string
   }
 
   componentDidMount() {
@@ -22,8 +26,9 @@ export default class References extends Component {
   }
 
   renderReference(key, reference) {
+    const { selectedReference, selectReference } = this.props;
     const { imageUrl, contourImageUrl, cannyTreshodLinking, cannyTreshold } = reference.toJS();
-    console.log(reference.toJS())
+
     return (
       <ImagePair
         cannyTreshodLinking={cannyTreshodLinking}
@@ -31,6 +36,8 @@ export default class References extends Component {
         contourUrl={contourImageUrl}
         id={key}
         imageUrl={imageUrl}
+        isSelected={selectedReference === key}
+        onClick={() => selectReference(key)}
         pairType="reference"
       />
     );

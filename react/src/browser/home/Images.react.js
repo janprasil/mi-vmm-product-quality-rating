@@ -6,13 +6,15 @@ import { deleteAllImages, putImage } from '../../common/api/actions';
 import { FileUpload } from 'redux-file-upload';
 
 @connect(state => ({
-  images: state.api.getIn(['images', 'data'])
+  images: state.api.getIn(['images', 'data']),
+  sessionId: state.app.get('sessionId'),
 }), { deleteAllImages })
 export default class Images extends Component {
 
   static propTypes = {
     deleteAllImages: RPT.func,
-    images: RPT.array
+    images: RPT.array,
+    sessionId: RPT.string
   }
 
   renderImage(key, reference) {
@@ -31,7 +33,7 @@ export default class Images extends Component {
   }
 
   render() {
-    const { images, deleteAllImages } = this.props;
+    const { images, deleteAllImages, sessionId } = this.props;
 
     return (
       <div>
@@ -41,7 +43,7 @@ export default class Images extends Component {
           <button onClick={() => deleteAllImages()}>Smazat vše</button>
           <FileUpload
             allowedFileTypes={['jpg', 'jpeg', 'png']}
-            data={{ type: 'picture' }}
+            data={{ type: 'picture', sessionId: sessionId }}
             dropzoneId="fileUpload"
             multiple
             url="/webapi/images"

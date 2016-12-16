@@ -55,37 +55,26 @@ const apiReducer = (state = new State(), action) => {
         .setIn(['images', 'pending'], false);
     }
 
-    case actions.FETCH_DTW_START: {
-      return state
-        .setIn(['dtw', 'error'], false)
-        .setIn(['dtw', 'pending'], true);
-    }
-
-    case actions.FETCH_DTW_SUCCESS: {
+    case actions.START_PROCESSING_SUCCESS: {
+      console.log(action.payload)
       return state
         .setIn(['dtw', 'data'], action.payload)
         .setIn(['dtw', 'error'], false)
         .setIn(['dtw', 'pending'], false);
     }
 
-    case actions.FETCH_DTW_ERROR: {
-      return state
-        .setIn(['dtw', 'error'], true)
-        .setIn(['dtw', 'pending'], false);
-    }
-
     case 'FILE_UPLOAD_COMPLETE': {
       const { response } = action.payload;
-      console.log(response)
+
       if (response.key) {
         return state
-          .setIn(['images', 'data'], transformData(response.value))
+          .mergeIn(['images', 'data'], transformData(response.value))
           .setIn(['images', 'error'], false)
           .setIn(['images', 'pending'], false);
       }
 
       return state
-        .setIn(['references', 'data'], transformData(response))
+        .mergeIn(['references', 'data'], transformData(response))
         .setIn(['references', 'error'], false)
         .setIn(['references', 'pending'], false);
     }

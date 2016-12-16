@@ -6,10 +6,18 @@ export const FETCH_REFERENCES_ERROR = 'FETCH_REFERENCES_ERROR';
 export const PUT_REFERENCE_SUCCESS = 'PUT_REFERENCE_SUCCESS';
 export const DELETE_ALL_REFERENCES_SUCCESS = 'DELETE_ALL_REFERENCES_SUCCESS';
 
-export const FETCH_DTW_SUCCESS = 'FETCH_DTW_SUCCESS';
-export const FETCH_DTW_ERROR = 'FETCH_DTW_ERROR';
+export const START_PROCESSING_SUCCESS = 'START_PROCESSING_SUCCESS';
 
 export const DELETE_ALL_SUCCESS = 'DELETE_ALL_SUCCESS';
+
+export const FETCH_SESSION_SUCCESS = 'FETCH_SESSION_SUCCESS';
+
+export function fetchSession() {
+  return {
+    type: 'FETCH_SESSION',
+    payload: fetch('/webapi/images/session').then(res => res.json())
+  };
+}
 
 export function fetchReferences() {
   return {
@@ -55,16 +63,9 @@ export function putImage(sessionId, id, ct, ctl) {
   };
 }
 
-export function fetchDtw() {
-  return {
-    type: 'FETCH_DTW',
-    payload: fetch('/webapi/contours/dtw').then(res => res.json())
-  };
-}
-
-export function startProcessing() {
+export function startProcessing(sessionId, referenceId) {
   return {
     type: 'START_PROCESSING',
-    payload: fetch('/webapi/reference?id=2&ct=23.23&ctl=23', { method: 'PUT' }).then(res => res.json())
+    payload: fetch(`/webapi/dtw?sessionId=${sessionId}&referenceId=${referenceId}`).then(res => res.json())
   }
 }

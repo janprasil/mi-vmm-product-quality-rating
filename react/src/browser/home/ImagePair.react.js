@@ -16,6 +16,8 @@ export default class ImagePair extends Component {
     contourUrl: RPT.string,
     id: RPT.string,
     imageUrl: RPT.string,
+    isSelected: RPT.bool,
+    onClick: RPT.func,
     pairType: RPT.oneOf(['reference', 'image']),
     putImage: RPT.func,
     putReference: RPT.func,
@@ -23,9 +25,10 @@ export default class ImagePair extends Component {
   }
 
   render() {
-    const { id, imageUrl, contourUrl, cannyTreshodLinking, cannyTreshold, putImage, putReference, pairType, sessionId } = this.props;
+    const { id, imageUrl, contourUrl, cannyTreshodLinking, cannyTreshold, putImage, putReference, pairType, sessionId, isSelected, onClick } = this.props;
+    const wrapperStyle = isSelected ? { ...styles.imageWrapper, ...styles.selected } : styles.imageWrapper;
     return (
-      <div style={styles.imageWrapper}>
+      <div style={wrapperStyle} onClick={onClick ? () => onClick() : () => {}}>
         <img src={imageUrl} style={styles.image} />
         <img src={`${contourUrl}?${Math.random()}`} style={styles.image} />
         <p>cannyThreshold</p>
@@ -60,5 +63,8 @@ const styles = {
   image: {
     width: '200px',
     marginLeft: '5px'
+  },
+  selected: {
+    border: '3px solid blue'
   }
 }

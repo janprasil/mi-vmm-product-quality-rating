@@ -9,6 +9,12 @@ export const INCREMENT_SEATS = 'INCREMENT_SEATS';
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const TOGGLE_MENU = 'TOGGLE_MENU';
+export const SELECT_REFERENCE = 'SELECT_REFERENCE';
+
+export const selectReference = (key) => ({
+  type: SELECT_REFERENCE,
+  payload: { key }
+});
 
 export const setLocation = (location) => ({
   type: APP_SET_LOCATION,

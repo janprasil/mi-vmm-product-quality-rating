@@ -5,7 +5,8 @@ const State = Record({
   error: null,
   location: null,
   uploadPending: false,
-  sessionId: null
+  sessionId: null,
+  selectedReference: null
 }, 'app');
 
 const appReducer = (state = new State(), action) => {
@@ -22,12 +23,13 @@ const appReducer = (state = new State(), action) => {
     case 'FILE_UPLOAD_MULTIPLE_FILE_UPLOAD_SUCCESS':
       return state.set('uploadPending', false);
 
-    case 'FILE_UPLOAD_COMPLETE': {
-      const { response } = action.payload;
-      if (!response.key) return state;
-      return state.set('sessionId', response.key);
+    case 'FETCH_SESSION_SUCCESS': {
+      const { sessionId } = action.payload;
+      return state.set('sessionId', sessionId);
     }
 
+    case 'SELECT_REFERENCE':
+      return state.set('selectedReference', action.payload.key);
 
     default:
       return state;
