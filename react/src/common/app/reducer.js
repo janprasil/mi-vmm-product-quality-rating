@@ -5,7 +5,8 @@ const State = Record({
   error: null,
   location: null,
   uploadPending: false,
-  sessionId: null
+  sessionId: null,
+  selectedReference: null
 }, 'app');
 
 const appReducer = (state = new State(), action) => {
@@ -28,6 +29,8 @@ const appReducer = (state = new State(), action) => {
       return state.set('sessionId', response.key);
     }
 
+    case 'SELECT_REFERENCE':
+      return state.set('selectedReference', action.payload.key);
 
     default:
       return state;
