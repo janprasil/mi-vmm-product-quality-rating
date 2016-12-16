@@ -1,7 +1,6 @@
 ﻿using Firebase.Database;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using vmm.api.Models;
@@ -25,7 +24,7 @@ namespace vmm.api.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> Get(string id)
+        public async Task<JsonResult> Get(string id = null)
         {
             if (id == null)
             {
@@ -64,7 +63,7 @@ namespace vmm.api.Controllers
 
             await dbManager.PutAsync(new string[] { "ReferenceSamples", id }, shape);
 
-            return await Get(null);
+            return await Get();
         }
 
         [HttpPost]
@@ -91,23 +90,22 @@ namespace vmm.api.Controllers
                 await dbManager.PostAsync(result);
             }
 
-            return await Get(null);
+            return await Get();
         }
 
         [HttpDelete]
         public async Task<JsonResult> Delete(string id)
         {
             await dbManager.DeleteAsync(new string[] { "ReferenceSamples", id });
-            return await Get(null);
+            return await Get();
         }
-
 
         [HttpDelete]
         [Route("all")]
         public async Task<JsonResult> DeleteAll()
         {
             await dbManager.DeleteAllAsync<Shape>();
-            return await Get(null);
+            return await Get();
         }
     }
 }
