@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Firebase.Database;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -29,21 +30,39 @@ namespace vmm.api.Controllers
             if (id == null)
             {
                 var results = await dbManager.GetAllAsync<Shape>();
+                foreach (var x in results)
+                {
+                    x.Object.Timeline = null;
+                    x.Object.Points = null;
+                }
                 return Json(results);
             }
-            return Json(await dbManager.GetAsync<Shape>(new string[] { "ReferenceSamples", id }));
+            var result = await dbManager.GetAsync<Shape>(new string[] { "ReferenceSamples", id });
+            result.Points = null;
+            result.Timeline = null;
+            return Json(result);
         }
 
         [HttpPut]
         public async Task<JsonResult> Put(string id, double ct, double ctl)
         {
-            var post = await dbManager.GetAsync<Shape>(id);
-            var shape = post.Object;
-            shape.CannyTreshold = ct;
-            shape.CannyTreshodLinking = ctl;
+            var shape = await dbManager.GetAsync<Shape>(new string[] { "ReferenceSamples", id });
+            if (shape == null) return Json(new { id = "not_found", message = "Image or session was not found" });
+
+            if (!System.IO.File.Exists(shape.ContourLocalPath))
+            {
+                System.IO.File.Delete(shape.ContourLocalPath);
+            }
             var result = contoursManager.Detect(shape.LocalPath, shape.ContourLocalPath, ct, ctl);
 
-            await dbManager.PutAsync(id, result);
+            shape.CannyTreshold = ct;
+            shape.CannyTreshodLinking = ctl;
+            shape.Center = result.Center;
+
+            shape.Points = result.Points;
+            shape.Timeline = result.Timeline;
+
+            await dbManager.PutAsync(new string[] { "ReferenceSamples", id }, shape);
 
             return await Get(null);
         }

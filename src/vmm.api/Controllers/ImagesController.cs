@@ -39,6 +39,12 @@ namespace vmm.api.Controllers
         {
             var shape = await dbManager.GetAsync<Shape>(new string[] { "Images", sessionId, id.ToString() });
             if (shape == null) return Json(new { id = "not_found", message = "Image or session was not found" });
+
+            if (!System.IO.File.Exists(shape.ContourLocalPath))
+            {
+                System.IO.File.Delete(shape.ContourLocalPath);
+            }
+
             var result = contoursManager.Detect(shape.LocalPath, shape.ContourLocalPath, ct, ctl);
 
             shape.CannyTreshold = ct;
