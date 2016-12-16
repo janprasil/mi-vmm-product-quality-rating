@@ -8,7 +8,7 @@ const State = Record({
 }, 'api');
 
 function transformData(data) {
-  return data.reduce((prev, x) => prev.set(x.key, Map(x.object)), Map());
+  return data.reduce((prev, x) => prev.set(x.key, Map({ ...x.object, contourImageUrl: `${x.object.contourImageUrl}?${Math.random()}` })), Map());
 }
 
 const apiReducer = (state = new State(), action) => {
@@ -16,47 +16,81 @@ const apiReducer = (state = new State(), action) => {
     case actions.FETCH_REFERENCES_START: {
       return state
         .setIn(['references', 'error'], false)
-        .setIn(['references', 'pending'], true);
+        .setIn(['references', 'pendingFetch'], true);
     }
 
-    case actions.PUT_REFERENCE_SUCCESS:
-    case actions.DELETE_ALL_REFERENCES_SUCCESS:
     case actions.FETCH_REFERENCES_SUCCESS: {
       return state
         .setIn(['references', 'data'], transformData(action.payload))
         .setIn(['references', 'error'], false)
-        .setIn(['references', 'pending'], false);
+        .setIn(['references', 'pendingFetch'], false);
     }
 
     case actions.FETCH_REFERENCES_ERROR: {
       return state
         .setIn(['references', 'error'], true)
-        .setIn(['references', 'pending'], false);
+        .setIn(['references', 'pendingFetch'], false);
     }
 
-    case actions.FETCH_IMAGES_START: {
+    case actions.PUT_REFERENCE_START: {
+      return state
+        .setIn(['references', 'error'], false)
+        .setIn(['references', 'pendingPut'], true);
+    }
+
+    case actions.PUT_REFERENCE_SUCCESS: {
+      return state
+        .setIn(['references', 'data'], transformData(action.payload))
+        .setIn(['references', 'error'], false)
+        .setIn(['references', 'pendingPut'], false);
+    }
+
+    case actions.DELETE_ALL_REFERENCES_START: {
+      return state
+        .setIn(['references', 'error'], false)
+        .setIn(['references', 'pendingDelete'], true);
+    }
+
+    case actions.DELETE_ALL_REFERENCES_SUCCESS: {
+      return state
+        .setIn(['references', 'data'], transformData(action.payload))
+        .setIn(['references', 'error'], false)
+        .setIn(['references', 'pendingDelete'], false);
+    }
+
+    case actions.PUT_IMAGE_START: {
       return state
         .setIn(['images', 'error'], false)
-        .setIn(['images', 'pending'], true);
+        .setIn(['images', 'pendingPut'], true);
     }
 
-    case actions.PUT_IMAGE_SUCCESS:
-    case actions.DELETE_ALL_IMAGES_SUCCESS:
-    case actions.FETCH_IMAGES_SUCCESS: {
+    case actions.PUT_IMAGE_SUCCESS: {
       return state
         .setIn(['images', 'data'], transformData(action.payload))
         .setIn(['images', 'error'], false)
-        .setIn(['images', 'pending'], false);
+        .setIn(['images', 'pendingPut'], false);
     }
 
-    case actions.FETCH_IMAGES_ERROR: {
+    case actions.DELETE_ALL_IMAGES_START: {
       return state
-        .setIn(['images', 'error'], true)
-        .setIn(['images', 'pending'], false);
+        .setIn(['images', 'error'], false)
+        .setIn(['images', 'pendingDelete'], true);
+    }
+
+    case actions.DELETE_ALL_IMAGES_SUCCESS: {
+      return state
+        .setIn(['images', 'data'], transformData(action.payload))
+        .setIn(['images', 'error'], false)
+        .setIn(['images', 'pendingDelete'], false);
+    }
+
+    case actions.START_PROCESSING_START: {
+      return state
+        .setIn(['dtw', 'error'], false)
+        .setIn(['dtw', 'pending'], true);
     }
 
     case actions.START_PROCESSING_SUCCESS: {
-      console.log(action.payload)
       return state
         .setIn(['dtw', 'data'], action.payload)
         .setIn(['dtw', 'error'], false)

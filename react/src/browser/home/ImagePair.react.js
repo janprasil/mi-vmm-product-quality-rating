@@ -27,10 +27,13 @@ export default class ImagePair extends Component {
   render() {
     const { id, imageUrl, contourUrl, cannyTreshodLinking, cannyTreshold, putImage, putReference, pairType, sessionId, isSelected, onClick } = this.props;
     const wrapperStyle = isSelected ? { ...styles.imageWrapper, ...styles.selected } : styles.imageWrapper;
+    const parts = imageUrl.split('/');
+    const fileName = parts[parts.length - 1];
     return (
       <div style={wrapperStyle} onClick={onClick ? () => onClick() : () => {}}>
+        <span>{fileName}</span>
         <img src={imageUrl} style={styles.image} />
-        <img src={`${contourUrl}?${Math.random()}`} style={styles.image} />
+        <img src={contourUrl} style={styles.image} />
         <p>cannyThreshold</p>
         <Slider
           max={250}
@@ -58,13 +61,19 @@ export default class ImagePair extends Component {
 
 const styles = {
   imageWrapper: {
-    clear: 'both'
+    width: '250px',
+    float: 'left',
+    marginLeft: '20px',
+    marginTop: '20px',
+    padding: '10px',
+    boxSizing: 'border-box',
+    border: '5px solid white',
   },
   image: {
-    width: '200px',
-    marginLeft: '5px'
+    width: '210px'
   },
   selected: {
-    border: '3px solid blue'
+    border: '5px solid #5b5a5b',
+    backgroundColor: '#c6c6c6'
   }
 }

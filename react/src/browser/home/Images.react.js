@@ -39,7 +39,9 @@ export default class Images extends Component {
       <div>
         <div>
           <h1>Obrázky k porovnání</h1>
-          {images && images.map((x, key) => this.renderImage(key, x))}
+          <div style={styles.imagesWrapper}>
+            {images && images.map((x, key) => this.renderImage(key, x))}
+          </div>
           <button onClick={() => deleteAllImages()}>Smazat vše</button>
           <FileUpload
             allowedFileTypes={['jpg', 'jpeg', 'png']}
@@ -55,5 +57,13 @@ export default class Images extends Component {
         </div>
       </div>
     );
+  }
+}
+
+const styles = {
+  imagesWrapper: {
+    overflow: 'auto',
+    height: 'auto',
+    clear: 'both'
   }
 }

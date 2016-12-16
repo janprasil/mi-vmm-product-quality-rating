@@ -50,7 +50,9 @@ export default class References extends Component {
       <div>
         <div>
           <h1>Referenční obrázky</h1>
-          {references && references.map((x, key) => this.renderReference(key, x))}
+          <div style={styles.imagesWrapper}>
+            {references && references.map((x, key) => this.renderReference(key, x))}
+          </div>
           <button onClick={() => deleteAllReferences()}>Smazat vše</button>
           <FileUpload
             allowedFileTypes={['jpg', 'jpeg', 'png']}
@@ -66,5 +68,13 @@ export default class References extends Component {
         </div>
       </div>
     );
+  }
+}
+
+const styles = {
+  imagesWrapper: {
+    overflow: 'auto',
+    height: 'auto',
+    clear: 'both'
   }
 }
