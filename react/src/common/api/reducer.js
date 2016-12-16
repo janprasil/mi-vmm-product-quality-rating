@@ -58,7 +58,7 @@ const apiReducer = (state = new State(), action) => {
     case actions.START_PROCESSING_SUCCESS: {
       console.log(action.payload)
       return state
-        .setIn(['dtw', 'data'], action.payload[0].object.result)
+        .setIn(['dtw', 'data'], action.payload)
         .setIn(['dtw', 'error'], false)
         .setIn(['dtw', 'pending'], false);
     }

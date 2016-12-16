@@ -15,22 +15,24 @@ export default class Dtw extends Component {
 
   render() {
     const { dtw } = this.props;
-    console.log(dtw)
     if (!dtw) return null;
 
-    const data = [{
+    const results = dtw.reduce((prev, r) => [...prev, [{
       label: 'name',
-      values: dtw.reduce((prev, val) =>
+      values: r.object.result.reduce((prev, val) =>
           [...prev, { x: parseInt(val.split(', ')[0], 10), y: parseInt(val.split(', ')[1], 10) }]
         , [])
-    }];
+    }]], [])
 
     return (
-      <LineChart
-        data={data}
-        width={600}
-        height={200}
-      />
+      <div>
+        {results.map(data =>
+          <LineChart
+            data={data}
+            width={600}
+            height={200}
+          />)}
+      </div>
     );
   }
 }

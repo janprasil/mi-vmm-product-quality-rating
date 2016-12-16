@@ -3,7 +3,7 @@ import Images from './Images.react';
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import References from './References.react';
 import { connect } from 'react-redux';
-import { fetchReferences, startProcessing } from '../../common/api/actions';
+import { fetchSession, fetchReferences, startProcessing } from '../../common/api/actions';
 import { FileUpload } from 'redux-file-upload';
 
 @connect(state => ({
@@ -15,7 +15,7 @@ import { FileUpload } from 'redux-file-upload';
   uploadPending: state.app.get('uploadPending'),
   selectedReference: state.app.get('selectedReference'),
   sessionId: state.app.get('sessionId'),
-}), { fetchReferences, startProcessing })
+}), { fetchReferences, fetchSession, startProcessing })
 export default class Page extends Component {
 
   static propTypes = {
@@ -23,11 +23,17 @@ export default class Page extends Component {
     dtwError: RPT.bool,
     dtwPending: RPT.bool,
     fetchReferences: RPT.func.isRequired,
+    fetchSession: RPT.func.isRequired,
     referencesError: RPT.bool,
     referencesPending: RPT.bool,
     selectedReference: RPT.string,
     sessionId: RPT.string,
     uploadPending: RPT.bool,
+  }
+
+  componentDidMount() {
+    const { fetchSession } = this.props;
+    fetchSession();
   }
 
   render() {

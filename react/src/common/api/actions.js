@@ -10,6 +10,15 @@ export const START_PROCESSING_SUCCESS = 'START_PROCESSING_SUCCESS';
 
 export const DELETE_ALL_SUCCESS = 'DELETE_ALL_SUCCESS';
 
+export const FETCH_SESSION_SUCCESS = 'FETCH_SESSION_SUCCESS';
+
+export function fetchSession() {
+  return {
+    type: 'FETCH_SESSION',
+    payload: fetch('/webapi/images/session').then(res => res.json())
+  };
+}
+
 export function fetchReferences() {
   return {
     type: 'FETCH_REFERENCES',
