@@ -5,7 +5,9 @@ const State = Record({
   location: null,
   uploadPending: false,
   sessionId: null,
-  selectedReference: null
+  selectedReference: null,
+  turns: 50,
+  deviation: 0
 }, 'app');
 
 const appReducer = (state = new State(), action) => {
@@ -32,6 +34,11 @@ const appReducer = (state = new State(), action) => {
 
     case 'DELETE_ALL_REFERENCES_SUCCESS':
       return state.set('selectedReference', null);
+
+    case 'CHANGE_SLIDER_VALUE': {
+      const { slider, val } = action.payload;
+      return state.set(slider, val);
+    }
 
     default:
       return state;

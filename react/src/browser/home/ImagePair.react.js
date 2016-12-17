@@ -1,5 +1,3 @@
-require('rc-slider/assets/index.css');
-
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import Slider from 'rc-slider';
 import { connect } from 'react-redux';
