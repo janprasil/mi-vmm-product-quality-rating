@@ -66,6 +66,6 @@ export function putImage(sessionId, id, ct, ctl) {
 export function startProcessing(sessionId, referenceId) {
   return {
     type: 'START_PROCESSING',
-    payload: fetch(`/webapi/dtw?sessionId=${sessionId}&referenceId=${referenceId}`).then(res => res.json())
+    payload: fetch(`/webapi/dtw?sessionId=${sessionId}&referenceId=${referenceId}&turns=50`).then(res => res.json())
   };
 }

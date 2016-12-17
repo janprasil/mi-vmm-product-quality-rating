@@ -19,6 +19,8 @@ export default class Dtw extends Component {
 
     const results = dtw.reduce((prev, r) => [...prev, [{
       label: images.getIn([r.object.imageId, 'imageUrl']).split('/').pop(),
+      similarity: r.object.similarity,
+      score: r.object.score,
       values: r.object.result.reduce((prev, val) =>
           [...prev, { x: parseInt(val.split(', ')[0], 10), y: parseInt(val.split(', ')[1], 10) }]
         , [])
@@ -30,6 +32,8 @@ export default class Dtw extends Component {
         {results.map(data =>
           <div style={styles.chart}>
             <p>{data[0].label}</p>
+            <p>Similarity: {data[0].similarity}</p>
+            <p>Score: {data[0].score}</p>
             <LineChart
               data={data}
               width={600}
