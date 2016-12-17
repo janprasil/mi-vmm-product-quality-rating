@@ -1,4 +1,3 @@
-import * as actions from './actions';
 import { Record } from 'immutable';
 
 const State = Record({
@@ -31,9 +30,11 @@ const appReducer = (state = new State(), action) => {
     case 'SELECT_REFERENCE':
       return state.set('selectedReference', action.payload.key);
 
+    case 'DELETE_ALL_REFERENCES_SUCCESS':
+      return state.set('selectedReference', null);
+
     default:
       return state;
-
   }
 };
 

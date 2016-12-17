@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { fetchSession, startProcessing } from '../../common/api/actions';
 
 @connect(state => ({
+  dtwPending: state.api.getIn(['dtw', 'pending']),
   uploadPending: state.app.get('uploadPending'),
   selectedReference: state.app.get('selectedReference'),
   sessionId: state.app.get('sessionId'),
@@ -15,6 +16,7 @@ import { fetchSession, startProcessing } from '../../common/api/actions';
 export default class Page extends Component {
 
   static propTypes = {
+    dtwPending: RPT.bool,
     fetchSession: RPT.func.isRequired,
     selectedReference: RPT.string,
     sessionId: RPT.string,
@@ -27,7 +29,7 @@ export default class Page extends Component {
   }
 
   render() {
-    const { startProcessing, selectedReference, sessionId } = this.props;
+    const { dtwPending, startProcessing, selectedReference, sessionId } = this.props;
 
     return (
       <div>
@@ -35,8 +37,9 @@ export default class Page extends Component {
         <References />
         <div style={styles.space} />
         <Images />
+        <div style={styles.space} />
         {selectedReference && sessionId
-          ? <Button onClick={() => startProcessing(sessionId, selectedReference)}>Spustit výpočet</Button>
+          ? <Button disabled={dtwPending} onClick={() => startProcessing(sessionId, selectedReference)}>Spustit výpočet</Button>
           : <p>Před pokračováním nahrajte obrázky k porovnání a zvolte referenční obrázek.</p>
         }
         <Dtw />
@@ -47,7 +50,7 @@ export default class Page extends Component {
 
 const styles = {
   space: {
-    height: '100px',
+    height: '50px',
     width: '100%'
   }
-}
+};

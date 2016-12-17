@@ -55,7 +55,8 @@ const apiReducer = (state = new State(), action) => {
       return state
         .setIn(['references', 'data'], transformData(action.payload))
         .setIn(['references', 'error'], false)
-        .setIn(['references', 'pendingDelete'], false);
+        .setIn(['references', 'pendingDelete'], false)
+        .set('dtw', new Map());
     }
 
     case actions.PUT_IMAGE_START: {
@@ -81,13 +82,12 @@ const apiReducer = (state = new State(), action) => {
       return state
         .setIn(['images', 'data'], transformData(action.payload))
         .setIn(['images', 'error'], false)
-        .setIn(['images', 'pendingDelete'], false);
+        .setIn(['images', 'pendingDelete'], false)
+        .set('dtw', new Map());
     }
 
     case actions.START_PROCESSING_START: {
-      return state
-        .setIn(['dtw', 'error'], false)
-        .setIn(['dtw', 'pending'], true);
+      return state.set('dtw', new Map({ pending: true }));
     }
 
     case actions.START_PROCESSING_SUCCESS: {

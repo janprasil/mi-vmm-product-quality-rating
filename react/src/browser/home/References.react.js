@@ -55,7 +55,7 @@ export default class References extends Component {
           <div style={styles.imagesWrapper}>
             {references && references.map((x, key) => this.renderReference(key, x))}
           </div>
-          {references && <Button backgroundColor="secondary" disabled={referencesPendingDelete} onClick={() => deleteAllReferences()}>Smazat vše</Button>}
+          {references && references.size > 0 && <Button backgroundColor="secondary" disabled={referencesPendingDelete} onClick={() => deleteAllReferences()}>Smazat vše</Button>}
           <FileUpload
             allowedFileTypes={['jpg', 'jpeg', 'png']}
             data={{ type: 'picture' }}

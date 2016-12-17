@@ -43,7 +43,7 @@ export default class Images extends Component {
           <div style={styles.imagesWrapper}>
             {images && images.map((x, key) => this.renderImage(key, x))}
           </div>
-          {images && <Button backgroundColor="secondary" disabled={imagesPendingDelete} onClick={() => deleteAllImages(sessionId)}>Smazat vše</Button>}
+          {images && images.size > 0 && <Button backgroundColor="secondary" disabled={imagesPendingDelete} onClick={() => deleteAllImages(sessionId)}>Smazat vše</Button>}
           <FileUpload
             allowedFileTypes={['jpg', 'jpeg', 'png']}
             data={{ type: 'picture', sessionId }}
