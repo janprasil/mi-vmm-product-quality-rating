@@ -139,9 +139,9 @@ namespace vmm.api.Services
             return result;
         }
 
-        public Result BestDTW(Shape s1, Shape s2, int? turns)
+        public Result BestDTW(Shape s1, Shape s2, int? turns, int? w)
         {
-            if (turns == null || turns == 0) return DynamicTimeWarping(s1, s2);
+            if (turns == null || turns == 0) return DynamicTimeWarping(s1, s2, w);
             Queue<double> q = new Queue<double>(s1.Timeline);
 
             int n = s1.Timeline.Count();
@@ -161,29 +161,41 @@ namespace vmm.api.Services
                     q.Enqueue(q.Dequeue());
                 }
                 selectedTurningShape.Timeline = q.ToArray();
-                var r = DynamicTimeWarping(selectedTurningShape, s2);
+                var r = DynamicTimeWarping(selectedTurningShape, s2, w);
                 if (r.score < bestResult.score) bestResult = r;
             }
 
             return bestResult;
         }
 
-        public Result DynamicTimeWarping(Shape s1, Shape s2)
+        public Result DynamicTimeWarping(Shape s1, Shape s2, int? w)
         {
             int n = s1.Timeline.Count();
             int m = s2.Timeline.Count();
             var result = new double[n + 1, m + 1];
-            for (var i = 1; i <= n; i++) result[i, 0] = 10000.0;
-            for (var i = 1; i <= m; i++) result[0, i] = 10000.0;
+
+            if (w.HasValue)
+            {
+                w = Math.Max(w.Value, Math.Abs(n - m));
+                for (var i = 0; i <= n; i++)
+                    for (var j = 0; j <= m; j++)
+                        result[i, j] = double.MaxValue;
+            }
+            else
+            {
+                for (var i = 1; i <= n; i++) result[i, 0] = 10000.0;
+                for (var i = 1; i <= m; i++) result[0, i] = 10000.0;
+            }
             result[0, 0] = 0;
             for (var i = 1; i <= n; i++)
-            {
-                for (var j = 1; j <= m; j++)
+                for (var j = ((w.HasValue) ? Math.Max(1, i - w.Value) : 1); j <= ((w.HasValue) ? Math.Min(m, i + w.Value) : m); j++)
                 {
-                    var cost = Math.Pow(s1.Timeline.ElementAt(i - 1) - s2.Timeline.ElementAt(j - 1), 2.0);
+                    var cost = Math.Abs(s1.Timeline.ElementAt(i - 1) - s2.Timeline.ElementAt(j - 1));
+                    //var cost = Math.Pow(s1.Timeline.ElementAt(i - 1) - s2.Timeline.ElementAt(j - 1), 2.0);
                     result[i, j] = cost + min(result[i - 1, j], result[i, j - 1], result[i - 1, j - 1]);
                 }
-            }
+            //for (var j = 1; j <= m; j++)
+            //for (var j = Math.Max(1, i - w); j <= Math.Min(m, i + w); j++)
             var res = Backtrack(result, n, m);
 
             //y-x(m/n) = 0

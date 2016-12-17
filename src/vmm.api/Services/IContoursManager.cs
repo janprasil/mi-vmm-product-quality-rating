@@ -10,8 +10,8 @@ namespace vmm.api.Services
 
         Shape Detect(string filename, string targetFilename);
 
-        Result BestDTW(Shape s1, Shape s2, int? turns);
+        Result BestDTW(Shape s1, Shape s2, int? turns, int? w);
 
-        Result DynamicTimeWarping(Shape s1, Shape s2);
+        Result DynamicTimeWarping(Shape s1, Shape s2, int? w);
     }
 }

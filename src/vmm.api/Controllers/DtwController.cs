@@ -24,7 +24,7 @@ namespace vmm.api.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> runDtw(string sessionId, string referenceId, int? turns)
+        public async Task<JsonResult> runDtw(string sessionId, string referenceId, int? turns, int? w)
         {
             var result = new List<FirebaseObject<Result>>();
             var images = await dbManager.GetAllAsync<Shape>(new string[] { "Images", sessionId });
@@ -35,7 +35,7 @@ namespace vmm.api.Controllers
             foreach (var x in images)
             {
                 var sw = Stopwatch.StartNew();
-                var res = contoursManager.BestDTW(reference, x.Object, turns);
+                var res = contoursManager.BestDTW(reference, x.Object, turns, w);
                 sw.Stop();
                 log.LogInformation($"GET /dtw {sw.ElapsedMilliseconds}");
                 res.imageId = x.Key;
