@@ -109,6 +109,7 @@ const makeConfig = options => {
       const plugins = [
         new webpack.DefinePlugin({
           'process.env': {
+            APP_URL: JSON.stringify(process.env.APP_URL),
             IS_BROWSER: true, // Because webpack is used only for browser code.
             IS_SERVERLESS: JSON.stringify(process.env.IS_SERVERLESS || false),
             NODE_ENV: JSON.stringify(isDevelopment ? 'development' : 'production'),

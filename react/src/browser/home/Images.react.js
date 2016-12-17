@@ -1,12 +1,13 @@
+import Button from '../app/components/Button';
 import ImagePair from './ImagePair.react';
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
-import Slider from 'rc-slider';
 import { connect } from 'react-redux';
-import { deleteAllImages, putImage } from '../../common/api/actions';
+import { deleteAllImages } from '../../common/api/actions';
 import { FileUpload } from 'redux-file-upload';
 
 @connect(state => ({
   images: state.api.getIn(['images', 'data']),
+  imagesPendingDelete: state.api.getIn(['images', 'pendingDelete']),
   sessionId: state.app.get('sessionId'),
 }), { deleteAllImages })
 export default class Images extends Component {
@@ -14,12 +15,12 @@ export default class Images extends Component {
   static propTypes = {
     deleteAllImages: RPT.func,
     images: RPT.array,
+    imagesPendingDelete: RPT.bool,
     sessionId: RPT.string
   }
 
   renderImage(key, reference) {
     const { imageUrl, contourImageUrl, cannyTreshodLinking, cannyTreshold } = reference.toJS();
-    console.log(reference.toJS())
     return (
       <ImagePair
         cannyTreshodLinking={cannyTreshodLinking}
@@ -33,7 +34,7 @@ export default class Images extends Component {
   }
 
   render() {
-    const { images, deleteAllImages, sessionId } = this.props;
+    const { images, imagesPendingDelete, deleteAllImages, sessionId } = this.props;
 
     return (
       <div>
@@ -42,17 +43,17 @@ export default class Images extends Component {
           <div style={styles.imagesWrapper}>
             {images && images.map((x, key) => this.renderImage(key, x))}
           </div>
-          <button onClick={() => deleteAllImages()}>Smazat vše</button>
+          {images && <Button backgroundColor="secondary" disabled={imagesPendingDelete} onClick={() => deleteAllImages(sessionId)}>Smazat vše</Button>}
           <FileUpload
             allowedFileTypes={['jpg', 'jpeg', 'png']}
-            data={{ type: 'picture', sessionId: sessionId }}
+            data={{ type: 'picture', sessionId }}
             dropzoneId="fileUpload"
             multiple
             url="/webapi/images"
           >
-            <button>
-              Klikněte nebo přetáhněte obrázky k porovnání (JPG)
-            </button>
+            <Button>
+              Klikněte nebo přetáhněte obrázky k porovnání (JPG, PNG)
+            </Button>
           </FileUpload>
         </div>
       </div>
@@ -66,4 +67,4 @@ const styles = {
     height: 'auto',
     clear: 'both'
   }
-}
+};

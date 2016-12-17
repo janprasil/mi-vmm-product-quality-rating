@@ -52,12 +52,11 @@ export function putReference(id, ct, ctl) {
 export function deleteAllImages(sessionId) {
   return {
     type: 'DELETE_ALL_IMAGES',
-    payload: fetch(`/webapi/images/all?${sessionId}`, { method: 'DELETE' }).then(res => res.json())
+    payload: fetch(`/webapi/images/all?sessionId=${sessionId}`, { method: 'DELETE' }).then(res => res.json())
   };
 }
 
 export function putImage(sessionId, id, ct, ctl) {
-  console.log(id, ct, ctl)
   return {
     type: 'PUT_IMAGE',
     payload: fetch(`/webapi/images?sessionId=${sessionId}&id=${id}&ct=${ct}&ctl=${ctl}`, { method: 'PUT' }).then(res => res.json())
@@ -68,5 +67,5 @@ export function startProcessing(sessionId, referenceId) {
   return {
     type: 'START_PROCESSING',
     payload: fetch(`/webapi/dtw?sessionId=${sessionId}&referenceId=${referenceId}`).then(res => res.json())
-  }
+  };
 }

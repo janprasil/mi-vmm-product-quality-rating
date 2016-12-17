@@ -1,6 +1,6 @@
+import Button from '../app/components/Button';
 import ImagePair from './ImagePair.react';
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
-import Slider from 'rc-slider';
 import { connect } from 'react-redux';
 import { fetchReferences, deleteAllReferences } from '../../common/api/actions';
 import { selectReference } from '../../common/app/actions';
@@ -8,6 +8,7 @@ import { FileUpload } from 'redux-file-upload';
 
 @connect(state => ({
   references: state.api.getIn(['references', 'data']),
+  referencesPendingDelete: state.api.getIn(['references', 'pendingDelete']),
   selectedReference: state.app.get('selectedReference')
 }), { fetchReferences, deleteAllReferences, selectReference })
 export default class References extends Component {
@@ -16,6 +17,7 @@ export default class References extends Component {
     deleteAllReferences: RPT.func,
     fetchReferences: RPT.func.isRequired,
     references: RPT.array,
+    referencesPendingDelete: RPT.bool,
     selectReference: RPT.func,
     selectedReference: RPT.string
   }
@@ -44,7 +46,7 @@ export default class References extends Component {
   }
 
   render() {
-    const { references, deleteAllReferences } = this.props;
+    const { references, referencesPendingDelete, deleteAllReferences } = this.props;
 
     return (
       <div>
@@ -53,7 +55,7 @@ export default class References extends Component {
           <div style={styles.imagesWrapper}>
             {references && references.map((x, key) => this.renderReference(key, x))}
           </div>
-          <button onClick={() => deleteAllReferences()}>Smazat vše</button>
+          {references && <Button backgroundColor="secondary" disabled={referencesPendingDelete} onClick={() => deleteAllReferences()}>Smazat vše</Button>}
           <FileUpload
             allowedFileTypes={['jpg', 'jpeg', 'png']}
             data={{ type: 'picture' }}
@@ -61,9 +63,9 @@ export default class References extends Component {
             multiple
             url="/webapi/reference"
           >
-            <button>
-              Klikněte nebo přetáhněte referenční obrázky (JPG)
-            </button>
+            <Button>
+              Klikněte nebo přetáhněte referenční obrázky (JPG, PNG)
+            </Button>
           </FileUpload>
         </div>
       </div>
@@ -77,4 +79,4 @@ const styles = {
     height: 'auto',
     clear: 'both'
   }
-}
+};

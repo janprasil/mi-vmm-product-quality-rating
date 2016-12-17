@@ -3,6 +3,7 @@ import Images from './Images.react';
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import References from './References.react';
 import StatusBar from './StatusBar.react';
+import Button from '../app/components/Button';
 import { connect } from 'react-redux';
 import { fetchSession, startProcessing } from '../../common/api/actions';
 
@@ -17,6 +18,7 @@ export default class Page extends Component {
     fetchSession: RPT.func.isRequired,
     selectedReference: RPT.string,
     sessionId: RPT.string,
+    startProcessing: RPT.func
   }
 
   componentDidMount() {
@@ -31,13 +33,21 @@ export default class Page extends Component {
       <div>
         <StatusBar />
         <References />
+        <div style={styles.space} />
         <Images />
-        {selectedReference && sessionId 
-          ? <button onClick={() => startProcessing(sessionId, selectedReference)}>Spustit výpočet</button>
+        {selectedReference && sessionId
+          ? <Button onClick={() => startProcessing(sessionId, selectedReference)}>Spustit výpočet</Button>
           : <p>Před pokračováním nahrajte obrázky k porovnání a zvolte referenční obrázek.</p>
         }
         <Dtw />
       </div>
     );
+  }
+}
+
+const styles = {
+  space: {
+    height: '100px',
+    width: '100%'
   }
 }
