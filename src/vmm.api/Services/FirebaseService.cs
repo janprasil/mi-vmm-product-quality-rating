@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using vmm.api.Models;
-using System.Collections;
 
 namespace vmm.api.Services
 {
@@ -16,10 +15,14 @@ namespace vmm.api.Services
 
         public FirebaseService()
         {
-            //var api = "AIzaSyDfevwNo9zhgMZ2__Bi0_-v-LKaQj3Jq90"; // API key - not used at this time
             firebase = new FirebaseClient(FIREBASE_URL);
         }
-        
+
+        public async Task DeleteAllInSessionAsync(string type, string sessionId)
+        {
+            await firebase.Child(type).Child(sessionId).DeleteAsync();
+        }
+
         public async Task DeleteAllAsync<T>()
         {
             var type = getNodeName(typeof(T));
@@ -31,7 +34,7 @@ namespace vmm.api.Services
         {
             if (path.Count() < 1) return;
             var nesting = firebase.Child(path[0]);
-            for (var i = 1; i < path.Count(); i++ ) nesting = nesting.Child(path[i]);
+            for (var i = 1; i < path.Count(); i++) nesting = nesting.Child(path[i]);
             await nesting.DeleteAsync();
         }
 
@@ -91,7 +94,6 @@ namespace vmm.api.Services
             if (type == null) throw new ChildNotExists();
             return await firebase.Child(type).PostAsync(o);
         }
-
 
         public async Task PutAsync(string[] path, object o)
         {

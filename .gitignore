@@ -3,6 +3,7 @@
 
 src/**/*.jpeg
 src/**/*.jpg
+src/**/*.png
 
 .DS_Store
 

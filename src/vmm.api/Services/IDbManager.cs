@@ -23,6 +23,8 @@ namespace vmm.api.Services
 
         Task DeleteAllAsync<T>();
 
+        Task DeleteAllInSessionAsync(string type, string sessionId);
+
         Task<KeyValuePair<string, IReadOnlyCollection<FirebaseObject<T>>>> PostAllAsync<T>(string[] path, IEnumerable<T> o);
 
         Task<FirebaseObject<T>> PostAsync<T>(string[] path, T o) where T : IModel;

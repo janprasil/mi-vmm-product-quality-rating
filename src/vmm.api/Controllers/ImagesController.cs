@@ -104,10 +104,13 @@ namespace vmm.api.Controllers
             await dbManager.DeleteAsync(new string[] { "Images", sessionId, id });
             return Json(new { id = "image_deleted", message = "Image was removed" });
         }
-    }
 
-    internal class FirebaseOptions
-    {
-        public Func<Task<string>> AuthTokenAsyncFactory { get; set; }
+        [HttpDelete]
+        [Route("all")]
+        public async Task<JsonResult> DeleteAll(string sessionId)
+        {
+            await dbManager.DeleteAllInSessionAsync("Images", sessionId);
+            return await Get(sessionId);
+        }
     }
 }
