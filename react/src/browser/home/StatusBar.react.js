@@ -38,11 +38,12 @@ export default class StatusBar extends Component {
 
     return (
       <div style={style.wrapper}>
-        {referencesError && <p>Došlo k chybě. Určitě běží API?</p>}
+        {!process.env.APP_URL && <p>Není nastavena proměnná APP_URL!</p>}
+        {referencesError && process.env.APP_URL && <p>Došlo k chybě. Určitě na {process.env.APP_URL} běží backend?</p>}
         {uploadPending && <p>Odesílám fotky...</p>}
         {referencesPendingFetch && <p>Stahuji referenční obrázky...</p>}
         {(referencesPendingPut || imagesPendingPut) && <p>Odesílám nastavené hodnoty...</p>}
-        {(referencesPendingDelete || imagesPendingDelete)&& <p>Mažu...</p>}
+        {(referencesPendingDelete || imagesPendingDelete) && <p>Mažu...</p>}
         {dtwPending && <p>Počítám a kreslím grafy...</p>}
       </div>
     );
