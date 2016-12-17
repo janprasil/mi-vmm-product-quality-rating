@@ -1,6 +1,8 @@
 ﻿using Firebase.Database;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using vmm.api.Models;
 using vmm.api.Services;
@@ -12,11 +14,13 @@ namespace vmm.api.Controllers
     {
         private IContoursManager contoursManager;
         private IDbManager dbManager;
+        private ILogger<ImagesController> log;
 
-        public DtwController(IContoursManager contoursManager, IDbManager dbManager)
+        public DtwController(IContoursManager contoursManager, IDbManager dbManager, ILogger<ImagesController> log)
         {
             this.contoursManager = contoursManager;
             this.dbManager = dbManager;
+            this.log = log;
         }
 
         [HttpGet]
@@ -30,9 +34,13 @@ namespace vmm.api.Controllers
             if (reference == null) return Json(new { id = "NO_REFERENCE_SELECTED" });
             foreach (var x in images)
             {
+                var sw = Stopwatch.StartNew();
+                var res = contoursManager.DynamicTimeWarping(reference, x.Object);
+                sw.Stop();
+                log.LogInformation($"GET /dtw {sw.ElapsedMilliseconds}");
                 var r = new Result()
                 {
-                    result = contoursManager.DynamicTimeWarping(reference, x.Object),
+                    result = res,
                     imageId = x.Key,
                     referenceId = referenceId
                 };

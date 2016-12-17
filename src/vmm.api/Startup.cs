@@ -43,6 +43,7 @@ namespace vmm.api
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            loggerFactory.AddFile("logs/perf-{Date}.txt");
 
             app.UseMvc();
         }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using vmm.api.Models;
 using vmm.api.Services;
@@ -13,13 +15,15 @@ namespace vmm.api.Controllers
     {
         private IDbManager dbManager;
         private IContoursManager contoursManager;
+        private ILogger<ImagesController> log;
         private readonly IHostingEnvironment appEnvironment;
 
-        public ImagesController(IContoursManager contoursManager, IHostingEnvironment appEnvironment, IDbManager dbManager)
+        public ImagesController(IContoursManager contoursManager, IHostingEnvironment appEnvironment, IDbManager dbManager, ILogger<ImagesController> log)
         {
             this.contoursManager = contoursManager;
             this.appEnvironment = appEnvironment;
             this.dbManager = dbManager;
+            this.log = log;
         }
 
         [HttpGet]
@@ -48,7 +52,10 @@ namespace vmm.api.Controllers
                 System.IO.File.Delete(shape.ContourLocalPath);
             }
 
+            var sw = Stopwatch.StartNew();
             var result = contoursManager.Detect(shape.LocalPath, shape.ContourLocalPath, ct, ctl);
+            sw.Stop();
+            log.LogInformation($"PUT /images {sw.ElapsedMilliseconds}");
 
             shape.CannyTreshold = ct;
             shape.CannyTreshodLinking = ctl;
@@ -79,7 +86,10 @@ namespace vmm.api.Controllers
                     file.CopyTo(fs);
                     fs.Flush();
                 }
+                var sw = Stopwatch.StartNew();
                 var result = contoursManager.Detect(filename, target);
+                sw.Stop();
+                log.LogInformation($"POST /images {sw.ElapsedMilliseconds}");
 
                 result.ImageUrl = urlTarget;
                 result.ContourImageUrl = contourUrlTarget;

@@ -4,6 +4,7 @@
 src/**/*.jpeg
 src/**/*.jpg
 src/**/*.png
+**/logs/*
 
 .DS_Store
 
