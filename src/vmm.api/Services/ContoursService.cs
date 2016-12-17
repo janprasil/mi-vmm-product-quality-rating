@@ -139,7 +139,36 @@ namespace vmm.api.Services
             return result;
         }
 
-        public IEnumerable<Point> DynamicTimeWarping(Shape s1, Shape s2)
+        public Result BestDTW(Shape s1, Shape s2, int? turns)
+        {
+            if (turns == null || turns == 0) return DynamicTimeWarping(s1, s2);
+            Queue<double> q = new Queue<double>(s1.Timeline);
+
+            int n = s1.Timeline.Count();
+            int m = s2.Timeline.Count();
+            var selectedTurningShape = s1;
+
+            Result bestResult = new Result()
+            {
+                score = double.MaxValue,
+                similarity = double.MaxValue
+            };
+
+            for (int i = 0; i < n; i+=turns.Value)
+            {
+                for (int j = ((i != 0) ? i - turns.Value : i); j < i; j++)
+                {
+                    q.Enqueue(q.Dequeue());
+                }
+                selectedTurningShape.Timeline = q.ToArray();
+                var r = DynamicTimeWarping(selectedTurningShape, s2);
+                if (r.score < bestResult.score) bestResult = r;
+            }
+
+            return bestResult;
+        }
+
+        public Result DynamicTimeWarping(Shape s1, Shape s2)
         {
             int n = s1.Timeline.Count();
             int m = s2.Timeline.Count();
@@ -159,14 +188,21 @@ namespace vmm.api.Services
 
             //y-x(m/n) = 0
             var distances = new List<double>();
-            var pX = (double)m / (double)n;
+            var pX = (double)res.ElementAt(0).Y / (double) res.ElementAt(0).X;
             foreach (var x in res)
             {
-                distances.Add((Math.Abs(-1 * pX * x.X + x.Y) / Math.Sqrt(pX * pX + 1)));
+                distances.Add((Math.Abs(-1.0 * res.ElementAt(0).Y * x.X + res.ElementAt(0).X * x.Y) / Math.Sqrt(res.ElementAt(0).X * res.ElementAt(0).X + res.ElementAt(0).Y * res.ElementAt(0).Y)));
             }
             var similarity = distances.Sum() / res.Count();
+            var max = distances.Max();
+            var mm = distances.Min();
             //var similarity = res.Select(x => Math.Abs(x.X - x.Y)).Sum(x => x) / res.Count();
-            return res;
+            return new Models.Result()
+            {
+                result = res,
+                score = result[n, m],
+                similarity = similarity
+            };
         }
 
         private double min(double v1, double v2, double v3)
