@@ -3,8 +3,8 @@ import ImagePair from './ImagePair.react';
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import { connect } from 'react-redux';
 import { fetchReferences, deleteAllReferences } from '../../common/api/actions';
-import { selectReference } from '../../common/app/actions';
 import { FileUpload } from 'redux-file-upload';
+import { selectReference } from '../../common/app/actions';
 
 @connect(state => ({
   references: state.api.getIn(['references', 'data']),
@@ -16,7 +16,7 @@ export default class References extends Component {
   static propTypes = {
     deleteAllReferences: RPT.func,
     fetchReferences: RPT.func.isRequired,
-    references: RPT.array,
+    references: RPT.object,
     referencesPendingDelete: RPT.bool,
     selectReference: RPT.func,
     selectedReference: RPT.string
