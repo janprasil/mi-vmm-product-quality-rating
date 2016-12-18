@@ -34,11 +34,21 @@ namespace vmm.api.Services
             //CvInvoke.GaussianBlur(cannyEdges, gaussianBlur, new Size(3, 3), 0.25);
             //var treshold = new UMat();
             //CvInvoke.Threshold(gaussianBlur, treshold, cannyThreshold, 10.0, ThresholdType.Binary);
-            
 
             var contourImage = new Mat(image.Size, DepthType.Cv8U, 3);
-            contourImage.SetTo(new MCvScalar(0));
             var contour = FindContour(cannyEdges, contourImage);
+
+            
+
+            var array = new List<PointF>();
+            foreach (var p in contour.ToArray())
+            {
+                array.Add(new PointF(p.X, p.Y));
+            }
+
+            //var convex = CvInvoke.ConvexHull(array.ToArray(), false);
+
+           // CvInvoke.mome
 
             contourImage.Save(targetFilename);
             var center = GetCenter(contour);
@@ -87,18 +97,24 @@ namespace vmm.api.Services
 
             // Convert the image to grayscale and filter out the noise
             var result = new UMat();
-            image = image.Not();
+            var nImage = new UMat();
+
             result = image.ToUMat();
-            //CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Gray);
-            //CvInvoke.
-            //CvInvoke.Invert(result, result, DecompMethod.Normal);
-            
+            CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Gray);
+            CvInvoke.Threshold(result, nImage, 0, 255, ThresholdType.Binary | ThresholdType.Otsu);
+
+            var erodeImg = new UMat();
+            var dilateImg = new UMat();
+
+            CvInvoke.Erode(nImage, erodeImg, null, new Point(-1, -1), 1, BorderType.Constant, CvInvoke.MorphologyDefaultBorderValue);
+            CvInvoke.Dilate(erodeImg, dilateImg, null, new Point(-1, -1), 1, BorderType.Constant, CvInvoke.MorphologyDefaultBorderValue);
+
             // Use image pyr to remove noise
-            var pyrDown = new UMat();
-            CvInvoke.PyrDown(result, pyrDown);
-            CvInvoke.PyrUp(pyrDown, result);
-            result.Save(filename + ".pic.jpeg");
-            return result;
+            //var pyrDown = new UMat();
+            //CvInvoke.PyrDown(nImage, pyrDown);
+            //CvInvoke.PyrUp(pyrDown, nImage);
+            dilateImg.Save(filename + ".pic.jpeg");
+            return dilateImg;
         }
 
         private VectorOfPoint FindContour(IInputOutputArray cannyEdges, IInputOutputArray result)
@@ -110,7 +126,7 @@ namespace vmm.api.Services
             using (var hierachy = new Mat())
             using (var contours = new VectorOfVectorOfPoint())
             {
-                CvInvoke.FindContours(cannyEdges, contours, hierachy, RetrType.List, ChainApproxMethod.ChainApproxNone);
+                CvInvoke.FindContours(cannyEdges, contours, hierachy, RetrType.External, ChainApproxMethod.ChainApproxNone);
 
                 for (var i = 0; i < contours.Size; i++)
                 {
@@ -122,7 +138,7 @@ namespace vmm.api.Services
                     }
                 }
 
-                CvInvoke.DrawContours(result, contours, largestIndex, new MCvScalar(0, 0, 255), 3, LineType.AntiAlias, hierachy);
+                CvInvoke.DrawContours(result, contours, largestIndex, new MCvScalar(0, 0, 255), 3, LineType.EightConnected, hierachy);
                 largestContour = new VectorOfPoint(contours[largestIndex].ToArray());
             }
             return largestContour;
@@ -131,9 +147,7 @@ namespace vmm.api.Services
         private MCvPoint2D64f GetCenter(VectorOfPoint contour)
         {
             var moment = CvInvoke.Moments(contour, true);
-            var cX = (moment.M10 / moment.M00);
-            var cY = (moment.M01 / moment.M00);
-            return new MCvPoint2D64f(cX, cY);
+            return moment.GravityCenter;
         }
 
         private Dictionary<int, double> ComputeDistancesFromCenterPoint(VectorOfPoint contour, MCvPoint2D64f center)
@@ -173,7 +187,10 @@ namespace vmm.api.Services
                 }
                 selectedTurningShape.Timeline = q.ToArray();
                 var r = DynamicTimeWarping(selectedTurningShape, s2, w);
-                if (r.score < bestResult.score) bestResult = r;
+                if (r.score < bestResult.score)
+                {
+                    bestResult = r;
+                }
             }
 
             return bestResult;
@@ -211,16 +228,26 @@ namespace vmm.api.Services
             //y-x(m/n) = 0
             var distances = new List<double>();
             var dist2 = new List<Point>();
+            var dist4 = new Dictionary<int, double>();
             var pX = (double)res.ElementAt(0).Y / (double) res.ElementAt(0).X;
             var k = 0;
             foreach (var x in res)
             {
-                distances.Add((Math.Abs(-1.0 * res.ElementAt(0).Y * x.X + res.ElementAt(0).X * x.Y) / Math.Sqrt(res.ElementAt(0).X * res.ElementAt(0).X + res.ElementAt(0).Y * res.ElementAt(0).Y)));
+                var origValue = (m / n) * x.X;
+                var myValue = x.Y;
+
+                distances.Add(Math.Abs(origValue - myValue));
+                dist4.Add(k++, (Math.Abs(origValue - myValue)));
+                //distances.Add((Math.Abs(-1.0 * res.ElementAt(0).Y * x.X + res.ElementAt(0).X * x.Y) / Math.Sqrt(res.ElementAt(0).X * res.ElementAt(0).X + res.ElementAt(0).Y * res.ElementAt(0).Y)));
                 //dist2.Add(new Point(k++, (int)(Math.Abs(-1.0 * res.ElementAt(0).Y * x.X + res.ElementAt(0).X * x.Y) / Math.Sqrt(res.ElementAt(0).X * res.ElementAt(0).X + res.ElementAt(0).Y * res.ElementAt(0).Y))));
+                //dist4.Add(k++, (Math.Abs(-1.0 * res.ElementAt(0).Y * x.X + res.ElementAt(0).X * x.Y) / Math.Sqrt(res.ElementAt(0).X * res.ElementAt(0).X + res.ElementAt(0).Y * res.ElementAt(0).Y)));
             }
             var similarity = distances.Sum() / res.Count();
             var max = distances.Max();
             var mm = distances.Min();
+
+            var dist3 = Normalize(dist4, 10).Select(x => x.Value).ToList();
+            var sim = dist3.Sum() / res.Count();
 
             var myResult = new Models.Result()
             {
