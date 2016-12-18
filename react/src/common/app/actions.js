@@ -10,6 +10,12 @@ export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const TOGGLE_MENU = 'TOGGLE_MENU';
 export const SELECT_REFERENCE = 'SELECT_REFERENCE';
+export const CHANGE_SLIDER_VALUE = 'CHANGE_SLIDER_VALUE';
+
+export const changeSliderValue = (slider, val) => ({
+  type: CHANGE_SLIDER_VALUE,
+  payload: { slider, val }
+});
 
 export const selectReference = (key) => ({
   type: SELECT_REFERENCE,
