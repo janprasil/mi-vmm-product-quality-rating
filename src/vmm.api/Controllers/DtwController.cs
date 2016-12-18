@@ -37,7 +37,7 @@ namespace vmm.api.Controllers
                 var sw = Stopwatch.StartNew();
                 var res = contoursManager.BestDTW(reference, x.Object, turns, w);
                 sw.Stop();
-                log.LogInformation($"GET /dtw {sw.ElapsedMilliseconds}");
+                log.LogInformation($"GET /dtw {sw.ElapsedMilliseconds} {turns} {w}");
                 res.imageId = x.Key;
                 res.referenceId = referenceId;
                 result.Add(await dbManager.PostAsync(new string[] { "Results" }, res));
