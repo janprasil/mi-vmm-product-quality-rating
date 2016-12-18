@@ -30,6 +30,11 @@ namespace vmm.api.Services
             var image = CreateImage(filename);
             var cannyEdges = new UMat();
             CvInvoke.Canny(image, cannyEdges, cannyThreshold, cannyThresholdLinking);
+            //var gaussianBlur = new UMat();
+            //CvInvoke.GaussianBlur(cannyEdges, gaussianBlur, new Size(3, 3), 0.25);
+            //var treshold = new UMat();
+            //CvInvoke.Threshold(gaussianBlur, treshold, cannyThreshold, 10.0, ThresholdType.Binary);
+            
 
             var contourImage = new Mat(image.Size, DepthType.Cv8U, 3);
             contourImage.SetTo(new MCvScalar(0));
@@ -82,8 +87,12 @@ namespace vmm.api.Services
 
             // Convert the image to grayscale and filter out the noise
             var result = new UMat();
-            CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Gray);
-
+            image = image.Not();
+            result = image.ToUMat();
+            //CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Gray);
+            //CvInvoke.
+            //CvInvoke.Invert(result, result, DecompMethod.Normal);
+            
             // Use image pyr to remove noise
             var pyrDown = new UMat();
             CvInvoke.PyrDown(result, pyrDown);
@@ -122,7 +131,9 @@ namespace vmm.api.Services
         private MCvPoint2D64f GetCenter(VectorOfPoint contour)
         {
             var moment = CvInvoke.Moments(contour, true);
-            return moment.GravityCenter;
+            var cX = (moment.M10 / moment.M00);
+            var cY = (moment.M01 / moment.M00);
+            return new MCvPoint2D64f(cX, cY);
         }
 
         private Dictionary<int, double> ComputeDistancesFromCenterPoint(VectorOfPoint contour, MCvPoint2D64f center)
@@ -170,6 +181,7 @@ namespace vmm.api.Services
 
         public Result DynamicTimeWarping(Shape s1, Shape s2, int? w)
         {
+            if (w.HasValue && w.Value == 0) w = null;
             int n = s1.Timeline.Count();
             int m = s2.Timeline.Count();
             var result = new double[n + 1, m + 1];
@@ -194,27 +206,30 @@ namespace vmm.api.Services
                     //var cost = Math.Pow(s1.Timeline.ElementAt(i - 1) - s2.Timeline.ElementAt(j - 1), 2.0);
                     result[i, j] = cost + min(result[i - 1, j], result[i, j - 1], result[i - 1, j - 1]);
                 }
-            //for (var j = 1; j <= m; j++)
-            //for (var j = Math.Max(1, i - w); j <= Math.Min(m, i + w); j++)
             var res = Backtrack(result, n, m);
 
             //y-x(m/n) = 0
             var distances = new List<double>();
+            var dist2 = new List<Point>();
             var pX = (double)res.ElementAt(0).Y / (double) res.ElementAt(0).X;
+            var k = 0;
             foreach (var x in res)
             {
                 distances.Add((Math.Abs(-1.0 * res.ElementAt(0).Y * x.X + res.ElementAt(0).X * x.Y) / Math.Sqrt(res.ElementAt(0).X * res.ElementAt(0).X + res.ElementAt(0).Y * res.ElementAt(0).Y)));
+                //dist2.Add(new Point(k++, (int)(Math.Abs(-1.0 * res.ElementAt(0).Y * x.X + res.ElementAt(0).X * x.Y) / Math.Sqrt(res.ElementAt(0).X * res.ElementAt(0).X + res.ElementAt(0).Y * res.ElementAt(0).Y))));
             }
             var similarity = distances.Sum() / res.Count();
             var max = distances.Max();
             var mm = distances.Min();
-            //var similarity = res.Select(x => Math.Abs(x.X - x.Y)).Sum(x => x) / res.Count();
-            return new Models.Result()
+
+            var myResult = new Models.Result()
             {
                 result = res,
+                //result = dist2,
                 score = result[n, m],
                 similarity = similarity
             };
+            return myResult;
         }
 
         private double min(double v1, double v2, double v3)

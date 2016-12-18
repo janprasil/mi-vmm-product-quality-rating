@@ -3,12 +3,12 @@
   "version": 2,
   "targets": {
     ".NETFramework,Version=v4.5.2": {
-      "EmguCV/3.1.0.1": {
+      "EmguCV/3.1.0": {
         "type": "package",
         "dependencies": {
           "OpenTK": "1.1.2225",
           "OpenTK.GLControl": "1.1.2225",
-          "ZedGraph": "5.1.5"
+          "ZedGraph": "5.1.7"
         },
         "compile": {
           "lib/net30/Emgu.CV.UI.GL.dll": {},
@@ -2174,23 +2174,64 @@
           "lib/net45/_._": {}
         }
       },
-      "ZedGraph/5.1.5": {
+      "ZedGraph/5.1.7": {
         "type": "package",
         "compile": {
-          "lib/ZedGraph.dll": {}
+          "lib/net35-Client/ZedGraph.dll": {}
         },
         "runtime": {
-          "lib/ZedGraph.dll": {}
+          "lib/net35-Client/ZedGraph.dll": {}
+        },
+        "resource": {
+          "lib/net35-Client/de/ZedGraph.resources.dll": {
+            "locale": "de"
+          },
+          "lib/net35-Client/es/ZedGraph.resources.dll": {
+            "locale": "es"
+          },
+          "lib/net35-Client/fr/ZedGraph.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/net35-Client/hu/ZedGraph.resources.dll": {
+            "locale": "hu"
+          },
+          "lib/net35-Client/it/ZedGraph.resources.dll": {
+            "locale": "it"
+          },
+          "lib/net35-Client/ja/ZedGraph.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/net35-Client/pt/ZedGraph.resources.dll": {
+            "locale": "pt"
+          },
+          "lib/net35-Client/ru/ZedGraph.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/net35-Client/sk/ZedGraph.resources.dll": {
+            "locale": "sk"
+          },
+          "lib/net35-Client/sv/ZedGraph.resources.dll": {
+            "locale": "sv"
+          },
+          "lib/net35-Client/tr/ZedGraph.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/net35-Client/zh-cn/ZedGraph.resources.dll": {
+            "locale": "zh-cn"
+          },
+          "lib/net35-Client/zh-tw/ZedGraph.resources.dll": {
+            "locale": "zh-tw"
+          }
         }
       }
     },
     ".NETFramework,Version=v4.5.2/win7-x86": {
-      "EmguCV/3.1.0.1": {
+      "EmguCV/3.1.0": {
         "type": "package",
         "dependencies": {
           "OpenTK": "1.1.2225",
           "OpenTK.GLControl": "1.1.2225",
-          "ZedGraph": "5.1.5"
+          "ZedGraph": "5.1.7"
         },
         "compile": {
           "lib/net30/Emgu.CV.UI.GL.dll": {},
@@ -4315,24 +4356,65 @@
           "lib/net45/_._": {}
         }
       },
-      "ZedGraph/5.1.5": {
+      "ZedGraph/5.1.7": {
         "type": "package",
         "compile": {
-          "lib/ZedGraph.dll": {}
+          "lib/net35-Client/ZedGraph.dll": {}
         },
         "runtime": {
-          "lib/ZedGraph.dll": {}
+          "lib/net35-Client/ZedGraph.dll": {}
+        },
+        "resource": {
+          "lib/net35-Client/de/ZedGraph.resources.dll": {
+            "locale": "de"
+          },
+          "lib/net35-Client/es/ZedGraph.resources.dll": {
+            "locale": "es"
+          },
+          "lib/net35-Client/fr/ZedGraph.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/net35-Client/hu/ZedGraph.resources.dll": {
+            "locale": "hu"
+          },
+          "lib/net35-Client/it/ZedGraph.resources.dll": {
+            "locale": "it"
+          },
+          "lib/net35-Client/ja/ZedGraph.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/net35-Client/pt/ZedGraph.resources.dll": {
+            "locale": "pt"
+          },
+          "lib/net35-Client/ru/ZedGraph.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/net35-Client/sk/ZedGraph.resources.dll": {
+            "locale": "sk"
+          },
+          "lib/net35-Client/sv/ZedGraph.resources.dll": {
+            "locale": "sv"
+          },
+          "lib/net35-Client/tr/ZedGraph.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/net35-Client/zh-cn/ZedGraph.resources.dll": {
+            "locale": "zh-cn"
+          },
+          "lib/net35-Client/zh-tw/ZedGraph.resources.dll": {
+            "locale": "zh-tw"
+          }
         }
       }
     }
   },
   "libraries": {
-    "EmguCV/3.1.0.1": {
-      "sha512": "xiYFPDqGeHsMQLhY/GLgBwduIyAJuGug4T1X0lhQ4JbdPgPcR9P2lk5HTQ8npLLFVdvNPGLLzQGYxksy2jq52Q==",
+    "EmguCV/3.1.0": {
+      "sha512": "341QJqNK9adJr9v+MDWY7NdieUSZRpz+B5+46MzjP8FF5zL9nzwAdkaSjgKXbg5174hwmofRdyiu1wScXx+OEg==",
       "type": "package",
-      "path": "EmguCV/3.1.0.1",
+      "path": "EmguCV/3.1.0",
       "files": [
-        "EmguCV.3.1.0.1.nupkg.sha512",
+        "EmguCV.3.1.0.nupkg.sha512",
         "EmguCV.nuspec",
         "build/EmguCV.props",
         "build/EmguCV.targets",
@@ -8844,36 +8926,35 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "ZedGraph/5.1.5": {
-      "sha512": "CclJINtatXbtBS2r4FFMPaGuwokmk5OlBnuW+QN5+d/CST0fv2N88pm8c3rIoOkXMiWvWArE+Jz1d2WA0QPoDQ==",
+    "ZedGraph/5.1.7": {
+      "sha512": "TcZaInxUjYMJDWIaYvs/CgpssfVJQMqiry8GPP70klyheP4tYSQXFWi5HYwJvqao+epeUu3bsk3yDb3Nf/hVWw==",
       "type": "package",
-      "path": "ZedGraph/5.1.5",
+      "path": "ZedGraph/5.1.7",
       "files": [
-        "License-LGPL.txt",
-        "ZedGraph.5.1.5.nupkg.sha512",
+        "ZedGraph.5.1.7.nupkg.sha512",
         "ZedGraph.nuspec",
-        "lib/ZedGraph.XML",
-        "lib/ZedGraph.dll",
-        "lib/de/ZedGraph.resources.dll",
-        "lib/es/ZedGraph.resources.dll",
-        "lib/fr/ZedGraph.resources.dll",
-        "lib/hu/ZedGraph.resources.dll",
-        "lib/it/ZedGraph.resources.dll",
-        "lib/ja/ZedGraph.resources.dll",
-        "lib/pt/ZedGraph.resources.dll",
-        "lib/ru/ZedGraph.resources.dll",
-        "lib/sk/ZedGraph.resources.dll",
-        "lib/sv/ZedGraph.resources.dll",
-        "lib/tr/ZedGraph.resources.dll",
-        "lib/zh-cn/ZedGraph.resources.dll",
-        "lib/zh-tw/ZedGraph.resources.dll",
-        "readme.txt"
+        "content/License-LGPL.txt",
+        "lib/net35-Client/ZedGraph.XML",
+        "lib/net35-Client/ZedGraph.dll",
+        "lib/net35-Client/de/ZedGraph.resources.dll",
+        "lib/net35-Client/es/ZedGraph.resources.dll",
+        "lib/net35-Client/fr/ZedGraph.resources.dll",
+        "lib/net35-Client/hu/ZedGraph.resources.dll",
+        "lib/net35-Client/it/ZedGraph.resources.dll",
+        "lib/net35-Client/ja/ZedGraph.resources.dll",
+        "lib/net35-Client/pt/ZedGraph.resources.dll",
+        "lib/net35-Client/ru/ZedGraph.resources.dll",
+        "lib/net35-Client/sk/ZedGraph.resources.dll",
+        "lib/net35-Client/sv/ZedGraph.resources.dll",
+        "lib/net35-Client/tr/ZedGraph.resources.dll",
+        "lib/net35-Client/zh-cn/ZedGraph.resources.dll",
+        "lib/net35-Client/zh-tw/ZedGraph.resources.dll"
       ]
     }
   },
   "projectFileDependencyGroups": {
     "": [
-      "EmguCV >= 3.1.0.1",
+      "EmguCV >= 3.1.0-r16.12",
       "EntityFramework >= 6.1.3",
       "FirebaseDatabase.net >= 1.1.5",
       "Microsoft.ApplicationInsights.AspNetCore >= 1.0.0",
