@@ -30,25 +30,15 @@ namespace vmm.api.Services
             var image = CreateImage(filename);
             var cannyEdges = new UMat();
             CvInvoke.Canny(image, cannyEdges, cannyThreshold, cannyThresholdLinking);
-            //var gaussianBlur = new UMat();
-            //CvInvoke.GaussianBlur(cannyEdges, gaussianBlur, new Size(3, 3), 0.25);
-            //var treshold = new UMat();
-            //CvInvoke.Threshold(gaussianBlur, treshold, cannyThreshold, 10.0, ThresholdType.Binary);
 
             var contourImage = new Mat(image.Size, DepthType.Cv8U, 3);
             var contour = FindContour(cannyEdges, contourImage);
-
-            
 
             var array = new List<PointF>();
             foreach (var p in contour.ToArray())
             {
                 array.Add(new PointF(p.X, p.Y));
             }
-
-            //var convex = CvInvoke.ConvexHull(array.ToArray(), false);
-
-           // CvInvoke.mome
 
             contourImage.Save(targetFilename);
             var center = GetCenter(contour);
@@ -67,7 +57,7 @@ namespace vmm.api.Services
         {
             var result = new Dictionary<int, double>();
             var maxItem = input.FirstOrDefault(x => x.Value == input.Values.Max()).Key;
-            int k = 0;
+            var k = 0;
             for (int i = maxItem; i < input.Count; i++)
             {
                 result[k++] = input[i];
@@ -110,9 +100,6 @@ namespace vmm.api.Services
             CvInvoke.Dilate(erodeImg, dilateImg, null, new Point(-1, -1), 1, BorderType.Constant, CvInvoke.MorphologyDefaultBorderValue);
 
             // Use image pyr to remove noise
-            //var pyrDown = new UMat();
-            //CvInvoke.PyrDown(nImage, pyrDown);
-            //CvInvoke.PyrUp(pyrDown, nImage);
             dilateImg.Save(filename + ".pic.jpeg");
             return dilateImg;
         }
@@ -169,8 +156,8 @@ namespace vmm.api.Services
             if (turns == null || turns == 0) return DynamicTimeWarping(s1, s2, w);
             Queue<double> q = new Queue<double>(s1.Timeline);
 
-            int n = s1.Timeline.Count();
-            int m = s2.Timeline.Count();
+            var n = s1.Timeline.Count();
+            var m = s2.Timeline.Count();
             var selectedTurningShape = s1;
 
             Result bestResult = new Result()
@@ -179,7 +166,7 @@ namespace vmm.api.Services
                 similarity = double.MaxValue
             };
 
-            for (int i = 0; i < n; i+=turns.Value)
+            for (int i = 0; i < n; i += turns.Value)
             {
                 for (int j = ((i != 0) ? i - turns.Value : i); j < i; j++)
                 {
@@ -199,8 +186,8 @@ namespace vmm.api.Services
         public Result DynamicTimeWarping(Shape s1, Shape s2, int? w)
         {
             if (w.HasValue && w.Value == 0) w = null;
-            int n = s1.Timeline.Count();
-            int m = s2.Timeline.Count();
+            var n = s1.Timeline.Count();
+            var m = s2.Timeline.Count();
             var result = new double[n + 1, m + 1];
 
             if (w.HasValue)
@@ -220,16 +207,14 @@ namespace vmm.api.Services
                 for (var j = ((w.HasValue) ? Math.Max(1, i - w.Value) : 1); j <= ((w.HasValue) ? Math.Min(m, i + w.Value) : m); j++)
                 {
                     var cost = Math.Abs(s1.Timeline.ElementAt(i - 1) - s2.Timeline.ElementAt(j - 1));
-                    //var cost = Math.Pow(s1.Timeline.ElementAt(i - 1) - s2.Timeline.ElementAt(j - 1), 2.0);
                     result[i, j] = cost + min(result[i - 1, j], result[i, j - 1], result[i - 1, j - 1]);
                 }
             var res = Backtrack(result, n, m);
 
-            //y-x(m/n) = 0
             var distances = new List<double>();
             var dist2 = new List<Point>();
             var dist4 = new Dictionary<int, double>();
-            var pX = (double)res.ElementAt(0).Y / (double) res.ElementAt(0).X;
+            var pX = (double)res.ElementAt(0).Y / (double)res.ElementAt(0).X;
             var k = 0;
             foreach (var x in res)
             {
@@ -238,9 +223,6 @@ namespace vmm.api.Services
 
                 distances.Add(Math.Abs(origValue - myValue));
                 dist4.Add(k++, (Math.Abs(origValue - myValue)));
-                //distances.Add((Math.Abs(-1.0 * res.ElementAt(0).Y * x.X + res.ElementAt(0).X * x.Y) / Math.Sqrt(res.ElementAt(0).X * res.ElementAt(0).X + res.ElementAt(0).Y * res.ElementAt(0).Y)));
-                //dist2.Add(new Point(k++, (int)(Math.Abs(-1.0 * res.ElementAt(0).Y * x.X + res.ElementAt(0).X * x.Y) / Math.Sqrt(res.ElementAt(0).X * res.ElementAt(0).X + res.ElementAt(0).Y * res.ElementAt(0).Y))));
-                //dist4.Add(k++, (Math.Abs(-1.0 * res.ElementAt(0).Y * x.X + res.ElementAt(0).X * x.Y) / Math.Sqrt(res.ElementAt(0).X * res.ElementAt(0).X + res.ElementAt(0).Y * res.ElementAt(0).Y)));
             }
             var similarity = distances.Sum() / res.Count();
             var max = distances.Max();
@@ -249,10 +231,9 @@ namespace vmm.api.Services
             var dist3 = Normalize(dist4, 10).Select(x => x.Value).ToList();
             var sim = dist3.Sum() / res.Count();
 
-            var myResult = new Models.Result()
+            var myResult = new Result()
             {
                 result = res,
-                //result = dist2,
                 score = result[n, m],
                 similarity = similarity
             };
@@ -261,7 +242,7 @@ namespace vmm.api.Services
 
         private double min(double v1, double v2, double v3)
         {
-            double v = Math.Min(v1, v2);
+            var v = Math.Min(v1, v2);
             return Math.Min(v, v3);
         }
 
