@@ -20,7 +20,7 @@ export default class Images extends Component {
   }
 
   renderImage(key, reference) {
-    const { imageUrl, contourImageUrl, cannyTreshodLinking, cannyTreshold } = reference.toJS();
+    const { imageUrl, contourImageUrl, cannyTreshodLinking, cannyTreshold, timeline } = reference.toJS();
     return (
       <ImagePair
         cannyTreshodLinking={cannyTreshodLinking}
@@ -28,6 +28,7 @@ export default class Images extends Component {
         contourUrl={contourImageUrl}
         id={key}
         imageUrl={imageUrl}
+        timeline={timeline}
         pairType="image"
       />
     );

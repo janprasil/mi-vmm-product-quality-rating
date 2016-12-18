@@ -1,6 +1,7 @@
 import React, { PropTypes as RPT, PureComponent as Component } from 'react';
 import Slider from 'rc-slider';
 import { connect } from 'react-redux';
+import { LineChart } from 'react-d3-components';
 import { putImage, putReference } from '../../common/api/actions';
 
 @connect(state => ({
@@ -20,18 +21,32 @@ export default class ImagePair extends Component {
     putImage: RPT.func,
     putReference: RPT.func,
     sessionId: RPT.string,
+    timeline: RPT.array
   }
 
   render() {
-    const { id, imageUrl, contourUrl, cannyTreshodLinking, cannyTreshold, putImage, putReference, pairType, sessionId, isSelected, onClick } = this.props;
+    const { id, imageUrl, contourUrl, cannyTreshodLinking, cannyTreshold, putImage, putReference, pairType, sessionId, isSelected, onClick, timeline } = this.props;
     const wrapperStyle = isSelected ? { ...styles.imageWrapper, ...styles.selected } : styles.imageWrapper;
     const parts = imageUrl.split('/');
     const fileName = parts[parts.length - 1];
+
+    const data = [{
+      label: `${fileName}`,
+      values: Object.keys(timeline).reduce((prev2, key) =>
+        [...prev2, { x: parseInt(key, 10), y: timeline[key] }]
+      , [])
+    }];
+
     return (
       <div style={wrapperStyle} onClick={onClick ? () => onClick() : () => {}}>
         <span>{fileName}</span>
         <img src={imageUrl} style={styles.image} />
         <img src={contourUrl} style={styles.image} />
+        <LineChart
+          data={data}
+          width={200}
+          height={100}
+        />
         <p>cannyThreshold</p>
         <Slider
           max={250}

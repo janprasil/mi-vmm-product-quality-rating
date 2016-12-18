@@ -29,7 +29,7 @@ export default class References extends Component {
 
   renderReference(key, reference) {
     const { selectedReference, selectReference } = this.props;
-    const { imageUrl, contourImageUrl, cannyTreshodLinking, cannyTreshold } = reference.toJS();
+    const { imageUrl, contourImageUrl, cannyTreshodLinking, cannyTreshold, timeline } = reference.toJS();
 
     return (
       <ImagePair
@@ -40,6 +40,7 @@ export default class References extends Component {
         imageUrl={imageUrl}
         isSelected={selectedReference === key}
         onClick={() => selectReference(key)}
+        timeline={timeline}
         pairType="reference"
       />
     );

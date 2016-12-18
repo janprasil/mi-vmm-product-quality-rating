@@ -10,7 +10,7 @@ export default class Dtw extends Component {
 
   static propTypes = {
     dtw: RPT.array,
-    images: RPT.array
+    images: RPT.object
   }
 
   render() {
