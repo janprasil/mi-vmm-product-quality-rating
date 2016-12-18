@@ -30,16 +30,9 @@ namespace vmm.api.Controllers
             if (id == null)
             {
                 var results = await dbManager.GetAllAsync<Shape>();
-                foreach (var x in results)
-                {
-                    x.Object.Timeline = null;
-                    x.Object.Points = null;
-                }
                 return Json(results);
             }
             var result = await dbManager.GetAsync<Shape>(new string[] { "ReferenceSamples", id });
-            result.Points = null;
-            result.Timeline = null;
             return Json(result);
         }
 
