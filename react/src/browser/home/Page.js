@@ -52,19 +52,19 @@ export default class Page extends Component {
         {selectedReference && sessionId && images && images.size > 0
           ? (
             <div>
-              <p>Kolikrát bude obrázek při testování pootočen?</p>
+              <p>Velikost otočení</p>
               <Slider
-                max={500}
+                max={300}
                 min={0}
-                step={10}
+                step={5}
                 onAfterChange={(val) => changeSliderValue('turns', val)}
                 defaultValue={50}
               />
-              <p>Maximální odchylka</p>
+              <p>Lokální omezení</p>
               <Slider
                 max={100}
                 min={0}
-                step={10}
+                step={5}
                 onAfterChange={(val) => changeSliderValue('deviation', val)}
                 defaultValue={0}
               />
