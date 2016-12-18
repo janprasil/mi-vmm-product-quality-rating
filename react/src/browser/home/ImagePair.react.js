@@ -83,10 +83,10 @@ const styles = {
     border: '5px solid white',
   },
   image: {
-    width: '210px'
+    height: '150px'
   },
   selected: {
     border: '5px solid #5b5a5b',
     backgroundColor: '#c6c6c6'
   }
-}
+};

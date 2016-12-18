@@ -82,7 +82,7 @@ export default class Page extends Component {
 
 const styles = {
   space: {
-    height: '50px',
+    height: '35px',
     width: '100%'
   }
 };
