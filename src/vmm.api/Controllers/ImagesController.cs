@@ -89,7 +89,7 @@ namespace vmm.api.Controllers
                 var sw = Stopwatch.StartNew();
                 var result = contoursManager.Detect(filename, target);
                 sw.Stop();
-                log.LogInformation($"POST /images {sw.ElapsedMilliseconds}");
+                log.LogInformation($"POST /images {file.FileName} {sw.ElapsedMilliseconds}");
 
                 result.ImageUrl = urlTarget;
                 result.ContourImageUrl = contourUrlTarget;
